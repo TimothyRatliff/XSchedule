@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "XSchedule", "XSchedule\", "{D3A28C80-F306-4053-A15B-8104AF87C091}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6.1"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_51352"
+		Debug.AspNetCompiler.PhysicalPath = "XSchedule\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51352\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_51352"
+		Release.AspNetCompiler.PhysicalPath = "XSchedule\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51352\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "51352"
+		SlnRelativePath = "XSchedule\"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3A28C80-F306-4053-A15B-8104AF87C091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3A28C80-F306-4053-A15B-8104AF87C091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2CC4FECE-99EC-4339-86EC-339AA70417C2}
+	EndGlobalSection
+EndGlobal
