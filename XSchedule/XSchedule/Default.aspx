@@ -4,37 +4,36 @@
 
     <div class="jumbotron">
         <h1>XSchedule</h1>
-        <p class="lead">XSchedule is a scheduling app. It uses ASP.NET. ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-        <p><a href="http://www.asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+        <p class="lead">XSchedule is a work scheduling app, built by a team of computer science majors at Louisiana State University. It runs on ASP.NET, a web framework for building Web sites and Web applications.</p>
+        <p><a href="http://www.asp.net" class="btn btn-primary btn-lg">Learn more about ASP.NET &raquo;</a></p>
     </div>
 
     <div class="row">
         <div class="col-md-4">
-            <h2>Getting started</h2>
+            <h2>GitHub </h2>
             <p>
-                ASP.NET Web Forms lets you build dynamic websites using a familiar drag-and-drop, event-driven model.
-            A design surface and hundreds of controls and components let you rapidly build sophisticated, powerful UI-driven sites with data access.
+                Check out XSchedule's GitHub repository.
             </p>
             <p>
-                <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301948">Learn more &raquo;</a>
-            </p>
-        </div>
-        <div class="col-md-4">
-            <h2>Get more libraries</h2>
-            <p>
-                NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.
-            </p>
-            <p>
-                <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301949">Learn more &raquo;</a>
+                <a class="btn btn-default" href="https://github.com/TimothyRatliff/XSchedule">Code awaits! &raquo;</a>
             </p>
         </div>
         <div class="col-md-4">
-            <h2>Web Hosting</h2>
+            <h2>Elastic Beanstalk</h2>
             <p>
-                You can easily find a web hosting company that offers the right mix of features and price for your applications.
+                XSchedule is hosted entirely on Amazon Web Services!
             </p>
             <p>
-                <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301950">Learn more &raquo;</a>
+                <a class="btn btn-default" href="https://aws.amazon.com/elasticbeanstalk/">The cloud awaits! &raquo;</a>
+            </p>
+        </div>
+        <div class="col-md-4">
+            <h2>Project Wiki</h2>
+            <p>
+                Want to learn more about how XSchedule works?
+            </p>
+            <p>
+                <a class="btn btn-default" href="https://github.com/TimothyRatliff/XSchedule/wiki">Learn more &raquo;</a>
             </p>
         </div>
     </div>

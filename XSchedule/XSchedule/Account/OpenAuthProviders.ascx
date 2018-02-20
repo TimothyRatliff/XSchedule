@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="OpenAuthProviders.ascx.cs" Inherits="OpenAuthProviders" %>
 
-<div id="socialLoginList">
+<%--<div id="socialLoginList">
     <h4>Use another service to log in.</h4>
     <hr />
     <asp:ListView runat="server" ID="providerDetails" ItemType="System.String"
@@ -19,4 +19,4 @@
             </div>
         </EmptyDataTemplate>
     </asp:ListView>
-</div>
+</div>--%>
