@@ -33,7 +33,7 @@
                 Want to learn more about how XSchedule works?
             </p>
             <p>
-                <a class="btn btn-default" href="https://github.com/TimothyRatliff/XSchedule/wiki">Learn more &raquo;</a>
+                <a class="btn btn-default" href="https://github.com/TimothyRatliff/XSchedule/wiki">Knowledge awaits! &raquo;</a>
             </p>
         </div>
     </div>

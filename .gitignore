@@ -3,4 +3,40 @@
 *.mdf
 *.ldf
 *.pdf
+*.suo
+
+# File Paths
 XSchedule/Documentation
+XSchedule/.vs/*
+
+# User-specific files for VS
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_i.h
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
