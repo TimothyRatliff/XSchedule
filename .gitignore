@@ -6,8 +6,8 @@
 *.suo
 
 # File Paths
-XSchedule/Documentation
-XSchedule/.vs/*
+XSchedule/Documentation/
+XSchedule/.vs/
 
 # User-specific files for VS
 *.suo
