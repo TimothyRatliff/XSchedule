@@ -46,7 +46,11 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" runat="server" href="~/">XSchedule</a>
+                    <!--
+                    <a class="navbar-brand"> <img src="Content/images/XSLogo.png" alt="XSLogo" width="25" height="25" /> </a>
+                    -->
+                    <a class="navbar-brand" href="http://xschedule.online"><img src="Content/images/XSchedule.png" alt="XSLogo" width="75" height="25"></a>
+<%--                    <a class="navbar-brand" runat="server" href="~/">XSchedule </a>--%>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
