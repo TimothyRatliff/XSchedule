@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "XSchedule", "XSchedule\", "{D3A28C80-F306-4053-A15B-8104AF87C091}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6.1"
+		ProjectReferences = "{44819430-760e-4d18-871b-063d1e1b86c5}|XServer.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_51352"
 		Debug.AspNetCompiler.PhysicalPath = "XSchedule\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51352\"
@@ -25,13 +26,22 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "XSchedule", "XSchedule\", "
 		DefaultWebSiteLanguage = "Visual C#"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XServer", "XServer\XServer.csproj", "{44819430-760E-4D18-871B-063D1E1B86C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D3A28C80-F306-4053-A15B-8104AF87C091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D3A28C80-F306-4053-A15B-8104AF87C091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3A28C80-F306-4053-A15B-8104AF87C091}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3A28C80-F306-4053-A15B-8104AF87C091}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{44819430-760E-4D18-871B-063D1E1B86C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44819430-760E-4D18-871B-063D1E1B86C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44819430-760E-4D18-871B-063D1E1B86C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44819430-760E-4D18-871B-063D1E1B86C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
