@@ -1,6 +1,0 @@
-C:\Users\sazad\XSchedule\XSchedule\XServer\bin\Debug\XServer.dll
-C:\Users\sazad\XSchedule\XSchedule\XServer\bin\Debug\XServer.pdb
-C:\Users\sazad\XSchedule\XSchedule\XServer\obj\Debug\XServer.csproj.CoreCompileInputs.cache
-C:\Users\sazad\XSchedule\XSchedule\XServer\obj\Debug\XServer.dll
-C:\Users\sazad\XSchedule\XSchedule\XServer\obj\Debug\XServer.pdb
-C:\Users\sazad\XSchedule\XSchedule\XServer\obj\Debug\XServer.csprojResolveAssemblyReference.cache
