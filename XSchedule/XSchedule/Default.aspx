@@ -6,6 +6,7 @@
         <h1>XSchedule</h1>
         <p class="lead">XSchedule is a work scheduling app, built by a team of computer science majors at Louisiana State University. It runs on ASP.NET, a web framework for building Web sites and Web applications.</p>
         <p><a href="http://www.asp.net" class="btn btn-primary btn-lg">Learn more about ASP.NET &raquo;</a></p>
+        <p><a href="PrototypeAddUser.aspx" class="btn btn-primary btn-lg">Prototype &raquo;</a></p>
     </div>
 
     <div class="row">
