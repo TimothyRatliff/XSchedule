@@ -19,7 +19,7 @@ namespace XSchedule.Account
             IdentityResult result = manager.Create(user, Password.Text);
             if (result.Succeeded)
             {
-                manager.AddToRole(user.Id, "Manager");
+                manager.AddToRole(user.Id, Role.SelectedItem.Text);
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 //string code = manager.GenerateEmailConfirmationToken(user.Id);
                 //string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);

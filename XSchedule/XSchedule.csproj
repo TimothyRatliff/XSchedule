@@ -206,7 +206,9 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Manager\Web.config" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Manager\ManagerPage.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -375,6 +377,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Manager\ManagerPage.aspx.cs">
+      <DependentUpon>ManagerPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Manager\ManagerPage.aspx.designer.cs">
+      <DependentUpon>ManagerPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201804112014552_test.cs" />
     <Compile Include="Migrations\201804112014552_test.Designer.cs">
       <DependentUpon>201804112014552_test.cs</DependentUpon>
@@ -410,6 +419,10 @@
     <Compile Include="Migrations\201804112340169_addadmin2.cs" />
     <Compile Include="Migrations\201804112340169_addadmin2.Designer.cs">
       <DependentUpon>201804112340169_addadmin2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804120040564_oops.cs" />
+    <Compile Include="Migrations\201804120040564_oops.Designer.cs">
+      <DependentUpon>201804120040564_oops.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -477,6 +490,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804112340169_addadmin2.resx">
       <DependentUpon>201804112340169_addadmin2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804120040564_oops.resx">
+      <DependentUpon>201804120040564_oops.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

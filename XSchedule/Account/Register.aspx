@@ -11,6 +11,17 @@
         <hr />
         <asp:ValidationSummary runat="server" CssClass="text-danger" />
         <div class="form-group">
+            <asp:Label runat="server" AssociatedControlID="Role" CssClass="col-md-2 control-label">Account Type</asp:Label>
+            <div class="col-md-10">
+               <asp:DropDownList ID="Role" runat="server" CssClass="form-control" Width="146px">
+                   <asp:ListItem Selected="True">Customer</asp:ListItem>
+                   <asp:ListItem>Technician</asp:ListItem>
+                   <asp:ListItem>Manager</asp:ListItem>
+                </asp:DropDownList>
+                <asp:RequiredFieldValidator runat="server" ControlToValidate="Email"
+                    CssClass="text-danger" ErrorMessage="The customer field is required." />
+            </div>
+        </div><div class="form-group">
             <asp:Label runat="server" AssociatedControlID="Email" CssClass="col-md-2 control-label">Email</asp:Label>
             <div class="col-md-10">
                 <asp:TextBox runat="server" ID="Email" CssClass="form-control" TextMode="Email" />
