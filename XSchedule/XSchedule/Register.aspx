@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Login.aspx.cs" Inherits="Login" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Register.aspx.cs" Inherits="Register" %>
 
 <!DOCTYPE html>
 
@@ -11,6 +11,9 @@
         }
         .auto-style2 {
             width: 121px;
+        }
+        .auto-style3 {
+            margin-bottom: 5px;
         }
         .auto-style4 {
             width: 121px;
@@ -39,9 +42,20 @@
                 </td>
             </tr>
             <tr>
+                <td class="auto-style4">Type</td>
+                <td id="tf3" class="auto-style5">
+                    <asp:DropDownList ID="optionField" runat="server">
+                        <asp:ListItem Value="0">Customer</asp:ListItem>
+                        <asp:ListItem Value="1">Technician</asp:ListItem>
+                        <asp:ListItem Value="2">Manager</asp:ListItem>
+                    </asp:DropDownList>
+                </td>
+            </tr>
+            <tr>
                 <td class="auto-style4">&nbsp;</td>
                 <td id="typeField" class="auto-style5">
-                    &nbsp;</td>
+                    <asp:Button ID="SubmitButton" runat="server" CssClass="auto-style3" Height="39px" OnClick="SubmitButton_Click" Text="Submit" />
+                </td>
             </tr>
         </table>
         <asp:GridView ID="testGV"  runat="server">
@@ -50,9 +64,7 @@
             </Columns>
         </asp:GridView>
     
-        <asp:Button ID="LoginButton" runat="server" OnClick="LogInButton_Click" Text="Login" />
-    
-        <asp:Button ID="RegisterButton" runat="server" Text="Register" OnClick="RegisterButton_Click" />
+        <asp:Button ID="LogInButton" runat="server" OnClick="LogInButton_Click" Text="Return to Login" />
     
         <asp:Button ID="TestButton" runat="server" OnClick="Button1_Click" Text="Test" />
     
