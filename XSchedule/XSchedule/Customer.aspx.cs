@@ -14,7 +14,7 @@ public partial class Customer : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Session["CurrentUser"] == null)
+        if (Session["CurrentUser"] == null || (int)Session["CurrentUserType"] != 0)
         {
             Response.Redirect("default.aspx");
         }

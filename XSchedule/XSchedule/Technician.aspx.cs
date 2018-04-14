@@ -12,7 +12,7 @@ public partial class Technician : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (Session["CurrentUser"] == null)
+        if (Session["CurrentUser"] == null || (int)Session["CurrentUserType"] != 1)
         {
             Response.Redirect("default.aspx");
         }
@@ -22,7 +22,8 @@ public partial class Technician : System.Web.UI.Page
         string select = "SELECT username from Users WHERE id = " + Session["CurrentUser"];
         SqlCommand cmd = new SqlCommand(select, db);
         string name = (cmd.ExecuteScalar()).ToString();
-        UserLabel.Text = "Welcome " + name;
+        alertDiv1.InnerText= "Welcome " + name;
+        alertDiv1.Visible = true;
 
         string select2 = "SELECT jobId from Jobs WHERE completed = 0 and technicianId = " + Session["CurrentUser"];
         string select3 = "SELECT jobId,issuedBy,enqueueTime from Jobs WHERE completed = 0 and technicianId = " + Session["CurrentUser"];
@@ -40,7 +41,7 @@ public partial class Technician : System.Web.UI.Page
             cmd = new SqlCommand(select3, db);
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
-            CurrentJobLabel.Text = "Current Job: Job ID" + reader[0] +" Issued By: "+reader[1]+ "  Enqueue:"+ reader[2];
+            CurrentJobLabel.InnerText = "Current Job: Job ID" + reader[0] +" Issued By: "+reader[1]+ "  Enqueue:"+ reader[2];
 
         }
  
@@ -58,7 +59,7 @@ public partial class Technician : System.Web.UI.Page
         var result = cmd.ExecuteScalar();
         if (result == null)
         {
-            CurrentJobLabel.Text = "Queue is empty";
+            CurrentJobLabel.InnerText = "Queue is empty";
         }
         else
         {
@@ -69,10 +70,20 @@ public partial class Technician : System.Web.UI.Page
 
             string select3 = "SELECT jobId,issuedBy,enqueueTime from Jobs WHERE jobId = " + val;
             cmd = new SqlCommand(select3, db);
+
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
-            CurrentJobLabel.Text = "Current Job: Job ID " + reader[0] + " Issued By: " + reader[1] + "  Enqueue:" + reader[2];
+            string thisJobId = reader[0].ToString();
+            string thisCustId = reader[1].ToString();
+            string thisJobEnq = reader[1].ToString();
             reader.Close();
+
+            select3 = "Select username from Users where id='" + thisCustId + "'";
+            cmd = new SqlCommand(select3, db);
+
+            string thisCust = cmd.ExecuteScalar().ToString();
+            CurrentJobLabel.InnerText = "Current Job: Job ID  " + thisJobId + " Issued By: " + thisCust + "  Enqueue:" + thisJobEnq;
+            
 
             DateTime time = DateTime.Now;
             string format = "yyyy-MM-dd HH:mm:ss";
@@ -112,7 +123,7 @@ public partial class Technician : System.Web.UI.Page
 
         string update2 = "Update Users set pastJobs = pastJobs + 1 where id = " + by;
 
-        select = "Select enqueueTime from Jobs where jobId = " + val;
+        select = "Select checkedIn from Jobs where jobId = " + val;
         cmd = new SqlCommand(select, db);
 
         DateTime start = (DateTime)cmd.ExecuteScalar();
@@ -136,7 +147,7 @@ public partial class Technician : System.Web.UI.Page
         //and 30 + 10*years accounts for the increased pay based on experience
         float pay = hoursWorked * (30 + 10 * years);
         string payString = string.Format("{0:00}",pay);
-        CurrentJobLabel.Text = "Hours worked = " + hoursWorked + " cost = " + payString;
+        CurrentJobLabel.InnerText = "Hours worked = " + hoursWorked + " cost = " + payString;
         //debug string (Timespan seems buggy) "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds +"Milli  :" + diff.Milliseconds;
         db.Close();
     }
@@ -159,11 +170,6 @@ public partial class Technician : System.Web.UI.Page
             }
         }
         db.Close();
-    }
-    protected void LogOutButton_Click(object sender, EventArgs e)
-    {
-        Session["CurrentUser"] = null;
-        Response.Redirect("Login.aspx");
     }
 
 }

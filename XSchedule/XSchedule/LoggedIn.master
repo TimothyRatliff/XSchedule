@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="SiteMaster" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="LoggedIn.Master.cs" Inherits="LoggedIn" %>
 
 <!DOCTYPE html>
 
@@ -59,7 +59,7 @@
                         <AnonymousTemplate>
                             <ul class="nav navbar-nav navbar-right">
                                 <li><a runat="server" href="~/Register">Register</a></li>
-                                <li><a runat="server" href="~/Login">Log in</a></li>
+                                <li><a runat="server" href="~/Login">Log Out</a></li>
                             </ul>
                         </AnonymousTemplate>
                         <LoggedInTemplate>

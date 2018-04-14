@@ -7,7 +7,7 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class SiteMaster : MasterPage
+public partial class LoggedIn : MasterPage
 {
     private const string AntiXsrfTokenKey = "__AntiXsrfToken";
     private const string AntiXsrfUserNameKey = "__AntiXsrfUserName";
@@ -66,12 +66,12 @@ public partial class SiteMaster : MasterPage
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        Session["CurrentUser"] = null;
-        Session["CurrentUserType"] = null;
+
     }
 
     protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
     {
         Context.GetOwinContext().Authentication.SignOut();
     }
+
 }

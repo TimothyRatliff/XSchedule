@@ -30,7 +30,7 @@ public partial class Manager : System.Web.UI.Page
 
         DailyLabel.Text = "Report for "+yesterday;
         //get user
-        if (Session["CurrentUser"] == null)
+        if (Session["CurrentUser"] == null || (int)Session["CurrentUserType"] != 2)
         {
             Response.Redirect("default.aspx");
         }

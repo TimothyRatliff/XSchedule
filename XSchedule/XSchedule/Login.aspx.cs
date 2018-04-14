@@ -36,10 +36,6 @@ public partial class Login : System.Web.UI.Page
         db.Close();
     }
 
-    protected void RegisterButton_Click(object sender, EventArgs e)
-    {
-        Response.Redirect("Register.aspx");
-    }
 
     protected void LogInButton_Click(object sender, EventArgs e)
     {
@@ -52,7 +48,7 @@ public partial class Login : System.Web.UI.Page
         var result = cmd.ExecuteScalar();
         if (result == null)
         {
-            Response.Write("< script > alert('Invalid Login') </ script >");
+            alertDiv.Visible = true;
         }
         else
         {
@@ -62,14 +58,17 @@ public partial class Login : System.Web.UI.Page
             int type = (int)cmd2.ExecuteScalar();
             if (type == 0)
             {
+                Session["CurrentUserType"] = 0;
                 Response.Redirect("Customer.aspx");
             }
             if (type == 1)
             {
+                Session["CurrentUserType"] = 1;
                 Response.Redirect("Technician.aspx");
             }
             if (type == 2)
             {
+                Session["CurrentUserType"] = 2;
                 Response.Redirect("Manager.aspx");
             }
 
