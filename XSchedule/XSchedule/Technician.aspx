@@ -3,7 +3,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
     <style>
-      #alertDiv{
+      .alert{
           margin-top: 15px;
       }
       .form-group {

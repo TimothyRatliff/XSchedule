@@ -1,55 +1,81 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Customer.aspx.cs" Inherits="Customer" %>
+﻿<%@ Page Language="C#" Async="true" AutoEventWireup="true" MasterPageFile="~/LoggedIn.Master" CodeFile="Customer.aspx.cs" Inherits="Customer" %>
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-    <style type="text/css">
-        .auto-style1 {
-            width: 100%;
-        }
-        .auto-style3 {
-            margin-bottom: 5px;
-        }
-        .auto-style4 {
-            width: 121px;
-            height: 23px;
-        }
-        .auto-style5 {
-            height: 23px;
-        }
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
+    <style>
+     .alert{
+          margin-top: 15px;
+      }
+     .panel panel-default{
+        padding-bottom: 20px;
+        margin-top: 20px;
+     }
+      .alert alert-info{
+          margin-top: 15px;
+      }
+      .form-group {
+        padding-bottom: 20px;
+        margin-top: 20px;
+
+      }
+
+      .form-group {
+        padding-bottom: 20px;
+        margin-top: 20px;
+
+      }
+
+      .collapseButton {
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+      }
+
+      .radios{
+          width: 120px !important;
+      }
+/**/
+
     </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-    <div>
-    
-        <table class="auto-style1">
-            <tr>
-                <td class="auto-style4">&nbsp;</td>
-                <td id="2" class="auto-style5">
-                    <asp:Label ID="UserLabel" runat="server" Text="Label"></asp:Label>
-                </td>
-            </tr>
-            <tr>
-                <td class="auto-style4">Complexity</td>
-                <td id="tf3" class="auto-style5">
-                    <asp:RadioButtonList ID="complexityButtons" runat="server" RepeatDirection="Horizontal">
-                        <asp:ListItem Selected="True">1</asp:ListItem>
-                        <asp:ListItem Value="2">2</asp:ListItem>
-                        <asp:ListItem Value="3">3</asp:ListItem>
-                    </asp:RadioButtonList>
-                </td>
-            </tr>
-            <tr>
-                <td class="auto-style4">&nbsp;</td>
-                <td id="typeField" class="auto-style5">
-                    <asp:Button ID="SubmitButton" runat="server" CssClass="auto-style3" Height="39px" OnClick="SubmitButton_Click" Text="Submit" />
-                </td>
-            </tr>
-        </table>
-        <asp:GridView ID="completedJobs"  runat="server" Caption="Completed Jobs" AutoGenerateColumns="false">
+    <div runat="server" id="alertDiv1" class="alert alert-info" visible="false">
+         
+    </div>
+
+    <div class="row">
+        <a href="#collapseJob" class="btn btn-default collapseButton" data-toggle="collapse">Create a Job</a>
+    </div>
+
+    <div id="collapseJob" class ="collapse row">
+        <div id="jobPanel" class="panel panel-default col-sm-6 text-center">
+          <div class="panel-heading">Enter complexity and press submit</div>
+             <div class="btn-group" GroupName="complexityButtons" data-toggle="buttons">
+                <label class="btn btn-default radios active" >
+                 <asp:RadioButton runat="server" value="1" id="radio1" Checked="true" GroupName="complexityButtons"  AutoPostBack="True"/>
+                 1(Easiest)
+                </label>
+                <label class="btn btn-default radios">
+                 <asp:RadioButton runat="server"  value="2" id="radio2" GroupName="complexityButtons" AutoPostBack="True"/>
+                 2
+                </label>
+                <label class="btn btn-default radios">
+                 <asp:RadioButton runat="server"  value="3" id="radio3" GroupName="complexityButtons" AutoPostBack="True"/>
+                 3(Hardest)
+                </label>
+            </div>
+
+            <div class="col-sm-12">
+              <asp:Button ID="Button1" runat="server" class="btn btn-default" OnClick="SubmitButton_Click" Text="Create Job" />
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <a href="#compDiv" class="btn btn-default collapseButton" data-toggle="collapse">View Completed Jobs</a>
+     </div>
+
+    <div class="collapse" id="compDiv">
+        <asp:GridView ID="completedJobs" class="table table-hover" runat="server" Caption="Completed Jobs" AutoGenerateColumns="false">
             <Columns>
                 <asp:BoundField DataField="jobId" HeaderText="Job ID" />
                 <asp:BoundField DataField="enqueueTime" HeaderText="Enqueue Time" />
@@ -58,10 +84,17 @@
 			    <asp:BoundField DataField="technician" HeaderText="Technician" />
             </Columns>
         </asp:GridView>
-    
-        <asp:Button ID="ViewCompletedButton" runat="server" OnClick="ViewCompleted_Click" Text="View Completed" />
-    
-        <asp:GridView ID="startedJobs"  runat="server" Caption="Started Jobs" AutoGenerateColumns="false">
+    </div>
+
+    <div runat="server" id="noCompletedDiv" class="alert alert-warning" visible="false">
+         No Jobs Completed
+    </div>
+
+     <div class="row">
+        <a href="#startedDiv" class="btn btn-default collapseButton" data-toggle="collapse">View Started Jobs</a>
+     </div>
+    <div class="collapse" id="startedDiv">
+        <asp:GridView ID="startedJobs" class="table table-hover" runat="server" Caption="Started Jobs" AutoGenerateColumns="false">
             <Columns>
                 <asp:BoundField DataField="jobId" HeaderText="Job ID" />
                 <asp:BoundField DataField="enqueueTime" HeaderText="Enqueue Time" />
@@ -69,19 +102,29 @@
                 <asp:BoundField DataField="technician" HeaderText="Technician" />
             </Columns>
         </asp:GridView>
-    
-        <asp:Button ID="ViewStartedButton" runat="server" OnClick="ViewStarted_Click" Text="View Started" />
-    
-        <asp:GridView ID="unstartedJobs"  runat="server" Caption="Unstarted Jobs" AutoGenerateColumns="False" onrowdeleting="unstartedJobs_RowDeleting" >
+    </div>
+
+    <div runat="server" id="noStartedDiv" class="alert alert-warning" visible="false">
+         No Jobs Started
+    </div>
+
+     <div class="row">
+        <a href="#unstartedDiv" class="btn btn-default collapseButton" data-toggle="collapse">View Unstarted Jobs</a>
+     </div>    
+     
+    <div class="collapse" id="unstartedDiv">   
+        <asp:GridView ID="unstartedJobs" class="table table-hover" runat="server" Caption="Unstarted Jobs" AutoGenerateColumns="False" onrowdeleting="unstartedJobs_RowDeleting" >
             <Columns>
                 <asp:BoundField DataField="jobId" HeaderText="Job ID" />
                 <asp:BoundField DataField="enqueueTime" HeaderText="Enqueue Time" />
 			    <asp:BoundField DataField="position" HeaderText="Queue Position" />
-                <asp:BoundField />
                 <asp:CommandField ShowDeleteButton="True" />
             </Columns>
         </asp:GridView>
-    
+    </div>
+    <div runat="server" id="noUnstartedDiv" class="alert alert-warning" visible="false">
+         No Jobs Unstarted
+    </div>
         <asp:GridView ID="testGV"  runat="server">
             <Columns>
 
@@ -90,13 +133,7 @@
     
         <asp:Button ID="TestButton" runat="server" OnClick="Button1_Click" Text="Test" />
     
-        <asp:Button ID="UnstartedButton" runat="server" OnClick="ViewUnstarted_Click" Text="View Unstarted" />
     
-        <asp:Button ID="LogOutButton" runat="server" OnClick="LogOutButton_Click" Text="Log Out" />
-    
-    </div>
         <p>
             &nbsp;</p>
-    </form>
-</body>
-</html>
+</asp:Content>
