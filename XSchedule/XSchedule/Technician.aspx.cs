@@ -8,6 +8,38 @@ using System.Data;
 using System.Data.SqlClient;
 public partial class Technician : System.Web.UI.Page
 {
+    TimeSpan timeWithout95(DateTime start, DateTime end)
+    {
+        TimeSpan diff = new TimeSpan();
+
+        DateTime endOfDay = new DateTime(2000, 1, 1,17,0,0);
+        DateTime startOfDay = new DateTime(2000, 1, 1, 9, 0, 0);
+
+
+        if (start.TimeOfDay < end.TimeOfDay)
+        {
+            diff += (end.TimeOfDay - start.TimeOfDay);
+            start += (end.TimeOfDay - start.TimeOfDay);
+
+            int numDays = (end.Date.Subtract(start.Date)).Days;
+            diff +=(new TimeSpan(numDays,0,0,0));
+
+        }
+
+        else
+        {
+            diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (end.TimeOfDay - startOfDay.TimeOfDay);
+
+            //minus one because the previous calculation added a day
+            int numDays = (end.Date.Subtract(start.Date)).Days;
+            diff +=(new TimeSpan(numDays-1, 0, 0,0));
+
+        }
+
+        return diff;
+    }
+
+
     string con = "Data Source=den1.mssql3.gear.host;Initial Catalog=TestDBXSCHEDULE1;User Id=testdbxschedule1; Password=By2up3~f6!Wy";
 
     protected void Page_Load(object sender, EventArgs e)
@@ -75,7 +107,7 @@ public partial class Technician : System.Web.UI.Page
             reader.Read();
             string thisJobId = reader[0].ToString();
             string thisCustId = reader[1].ToString();
-            string thisJobEnq = reader[1].ToString();
+            string thisJobEnq = reader[2].ToString();
             reader.Close();
 
             select3 = "Select username from Users where id='" + thisCustId + "'";
@@ -127,19 +159,21 @@ public partial class Technician : System.Web.UI.Page
         cmd = new SqlCommand(select, db);
 
         DateTime start = (DateTime)cmd.ExecuteScalar();
-        TimeSpan startTime = start.TimeOfDay;
-        TimeSpan endTime = time.TimeOfDay;
-        TimeSpan diff = endTime.Subtract(startTime);
+        DateTime end = time;
+        TimeSpan diff = timeWithout95(start, end);
+        //TimeSpan startTime = start.TimeOfDay;
+        //TimeSpan endTime = time.TimeOfDay;
+        //TimeSpan diff = endTime.Subtract(startTime);
 
         select = "Select joinDate from Users where id = " + Session["CurrentUser"];
         cmd = new SqlCommand(select, db);
 
         DateTime techStart = (DateTime)cmd.ExecuteScalar();
 
-        TimeSpan timeWorking = endTime.Subtract(techStart.TimeOfDay);
+        TimeSpan timeWorking = end.Subtract(techStart);
         int years = timeWorking.Days / 365;
         //Hours gets hours between and diff.Days * 16 accounts for the 16 hours that arent being worked each day
-        int hoursWorked = (diff.Hours - diff.Days * 16);
+        int hoursWorked = (diff.Hours + diff.Days * 8);
         if (hoursWorked < 1)
         {
             hoursWorked = 1;
@@ -147,7 +181,7 @@ public partial class Technician : System.Web.UI.Page
         //and 30 + 10*years accounts for the increased pay based on experience
         float pay = hoursWorked * (30 + 10 * years);
         string payString = string.Format("{0:00}",pay);
-        CurrentJobLabel.InnerText = "Hours worked = " + hoursWorked + " cost = " + payString;
+        CurrentJobLabel.InnerText = "Hours worked = " + hoursWorked + " cost = " + payString;// + "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds + "Milli  :" + diff.Milliseconds + "days :" + start.Day + "Hours :" + start.Hour + "Minutes :" + start.Minute + "Seconds :" + start.Second + "Milli  :" + start.Millisecond + "days :" + end.Day + "Hours :" + end.Hour +"Minutes :"+end.Minute + "Seconds :" + end.Second + "Milli  :" + end.Millisecond;
         //debug string (Timespan seems buggy) "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds +"Milli  :" + diff.Milliseconds;
         db.Close();
     }

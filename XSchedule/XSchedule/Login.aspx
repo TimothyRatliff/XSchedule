@@ -2,17 +2,7 @@
 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
-    <style>
-      .alert{
-          margin-top: 15px;
-      }
-      .form-group {
-        padding-bottom: 20px;
-        margin-top: 20px;
 
-      }
-
-    </style>
 
     <div runat="server" id="alertDiv" class="alert alert-danger" visible="false">
         Username or password invalid.

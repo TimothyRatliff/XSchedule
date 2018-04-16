@@ -5,6 +5,7 @@
 <html lang="en">
 <head runat="server">
 
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%: Page.Title %> - XSchedule</title>
@@ -14,6 +15,44 @@
     </asp:PlaceHolder>
     <webopt:bundlereference runat="server" path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <style>
+    html {
+    overflow: -moz-scrollbars-vertical; 
+    overflow-y: scroll;
+    }
+
+     .alert{
+          margin-top: 15px;
+      }
+     .panel panel-default{
+        padding-bottom: 20px;
+        margin-top: 20px;
+     }
+      .alert alert-info{
+          margin-top: 15px;
+      }
+      .form-group {
+        padding-bottom: 20px;
+        margin-top: 20px;
+
+      }
+
+      .form-group {
+        padding-bottom: 20px;
+        margin-top: 20px;
+
+      }
+
+      .collapseButton {
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+      }
+
+      .radios{
+          width: 120px !important;
+      }
+    </style>
 <%--  --%>
 </head>
 <body>

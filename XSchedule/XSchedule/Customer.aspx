@@ -2,41 +2,7 @@
 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" Runat="Server">
-    <style>
-     .alert{
-          margin-top: 15px;
-      }
-     .panel panel-default{
-        padding-bottom: 20px;
-        margin-top: 20px;
-     }
-      .alert alert-info{
-          margin-top: 15px;
-      }
-      .form-group {
-        padding-bottom: 20px;
-        margin-top: 20px;
 
-      }
-
-      .form-group {
-        padding-bottom: 20px;
-        margin-top: 20px;
-
-      }
-
-      .collapseButton {
-        margin-top: 10px;
-        margin-bottom: 10px;
-
-      }
-
-      .radios{
-          width: 120px !important;
-      }
-/**/
-
-    </style>
     <div runat="server" id="alertDiv1" class="alert alert-info" visible="false">
          
     </div>
