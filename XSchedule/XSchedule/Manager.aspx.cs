@@ -331,86 +331,91 @@ public partial class Manager : System.Web.UI.Page
                     // string sameMonth = "((month(checkedIn)=month('" + month + "') and year(checkedIn)=year('" + month + "')) or (month(dequeueTime)=month('" + month + "') and year(dequeueTime)=year('" + month + "')))";
                     //string select4 = "select checkedIn,dequeueTime from Jobs where checkedIn IS NOT NULL and " + sameMonth + " and dequeueTime > '" + week0 + "' and checkedIn < '" + week4 + "' and technicianId=" + dr[0] + " Order by checkedIn ASC";
                     //"select checkedIn,dequeueTime from Jobs where dequeueTime > '" + morning + "' and (enqueueTime<'" + night + "' and checkedIn IS NOT NULL) and (Date(checkedIn)==Date('"+day+ "') or Date(dequeueTime)==Date('" + day + "'))and technicianId=" + dr[0]+" Order by enqueueTime ASC";
-                   
 
-                    int m = 1;
-                    int downTime = 0;
-                    while (m <= DateTime.DaysInMonth(lastM.Year, lastM.Month))
-                    {
-                        //dom = day of month
-                        DateTime dom = new DateTime(lastM.Year, lastM.Month, m);
-                        //iterator for days
-                        int k = 0;
 
-                        List<List<DateTime>> intervals = new List<List<DateTime>>();
-
-                        string sameDay = "(day(checkedIn)=day('" + dom + "') and month(checkedIn)=month('" + dom + "') and year(checkedIn)=year('" + dom + "'))";
-                        string select4 = "select checkedIn,dequeueTime from Jobs where checkedIn IS NOT NULL and " + sameDay + " and technicianId=" + dr3[0] + " Order by checkedIn ASC";
+                    string sameMonth = "(month(checkedIn)=month('" + lastM + "') and year(checkedIn)=year('" + lastM + "'))";
+                        string select4 = "select checkedIn,dequeueTime from Jobs where checkedIn IS NOT NULL and " + sameMonth + " and technicianId=" + dr3[0] + " Order by checkedIn ASC";
 
                         //populate intervals
                         SqlCommand cmd2 = new SqlCommand(select4, db);
                         using (SqlDataReader dr4 = cmd2.ExecuteReader())
                         {
-                            int j = 0;
-                            while (dr4.Read())
+
+                        int m0 = 1;
+                        int m1 = 1;
+                        int downTime = 0;
+                            while (m0 <= DateTime.DaysInMonth(lastM.Year, lastM.Month))
                             {
+                                //dom = day of month
+                                
+                                //iterator for days
+                                int k = 0;
 
-                                intervals.Add(new List<DateTime>());
-                                intervals[j].Add((DateTime)dr4[0]);
-                                intervals[j].Add((DateTime)dr4[1]);
-                                j += 1;
+                                List<List<DateTime>> intervals = new List<List<DateTime>>();
 
-                            }
+                                int j = 0;
+                                while (m0 == m1 && dr4.Read() )
+                                {
+                                    m1 = ((DateTime)dr4[1]).Day;
+                                    intervals.Add(new List<DateTime>());
+                                    intervals[j].Add((DateTime)dr4[0]);
+                                    intervals[j].Add((DateTime)dr4[1]);
+                                    j += 1;
 
- 
+                                }
+                            DateTime dom = new DateTime(lastM.Year, lastM.Month, m0);
+
 
 
                             if (intervals.Count == 0)
-                            {
-                                downTime += 8 * 60;
+                                {
+                                    downTime +=8 * 60;
                                 //System.Diagnostics.Debug.WriteLine(dr3[1] + " emptyx"+m);
+                                
+                                }
+                                else
+                                {
+                                    //case where didnt have job overnight
+                                    if (intervals.Count > 0 && (intervals[k][0].Hour >= 9 && intervals[k][0].Day == dom.Day))
+                                    {
+                                        downTime += (intervals[k][0].Hour - 9) * 60 + intervals[k][0].Minute;
+                                        m0 = intervals[k][1].Day;
+                                        //System.Diagnostics.Debug.WriteLine("Case 1");
+                                        //System.Diagnostics.Debug.WriteLine((intervals[k][0].Hour - 9) * 60 + intervals[k][0].Minute);
+
+                                    }
+                                    while (k < intervals.Count - 1)
+                                    {
+
+                                        //System.Diagnostics.Debug.WriteLine(intervals[k][0] + "    dequueue" + intervals[k][1]);
+                                        TimeSpan inter = (intervals[k + 1][0] - intervals[k][1]);
+
+                                        //System.Diagnostics.Debug.WriteLine("Case 2");
+                                        downTime += inter.Hours * 60 + inter.Minutes;
+                                        System.Diagnostics.Debug.WriteLine(inter.Hours * 60 + inter.Minutes);
+                                        k++;
+                                    }
+                                    //case where last job isnt overnight
+                                    if (intervals.Count > 0 && intervals[k][1].Hour < 17)
+                                    {
+                                        //System.Diagnostics.Debug.WriteLine(intervals[k][0] + "    dequueue" + intervals[k][1]);
+                                        //System.Diagnostics.Debug.WriteLine("Case 3");
+                                        downTime += (17 - intervals[k][1].Hour) * 60 - intervals[k][1].Minute;
+                                        //.Diagnostics.Debug.WriteLine((17 - intervals[k][1].Hour) * 60 - intervals[k][1].Minute);
+                                    }
+                                }
+                                m0++;
                             }
-                            else
-                            {
-                                //case where didnt have job overnight
-                                if (intervals.Count > 0 && (intervals[k][0].Hour >= 9 && intervals[k][0].Day == dom.Day))
-                                {
-                                    downTime += (intervals[k][0].Hour - 9) * 60 + intervals[k][0].Minute;
-                                    m = intervals[k][1].Day;
-                                    //System.Diagnostics.Debug.WriteLine("Case 1");
-                                    //System.Diagnostics.Debug.WriteLine((intervals[k][0].Hour - 9) * 60 + intervals[k][0].Minute);
-
-                                }
-                                while (k < intervals.Count - 1)
-                                {
-
-                                    //System.Diagnostics.Debug.WriteLine(intervals[k][0] + "    dequueue" + intervals[k][1]);
-                                    TimeSpan inter = (intervals[k + 1][0] - intervals[k][1]);
-
-                                    //System.Diagnostics.Debug.WriteLine("Case 2");
-                                    downTime += inter.Hours * 60 + inter.Minutes;
-                                    System.Diagnostics.Debug.WriteLine(inter.Hours * 60 + inter.Minutes);
-                                    k++;
-                                }
-                                //case where last job isnt overnight
-                                if (intervals.Count > 0 && intervals[k][1].Hour < 17)
-                                {
-                                    //System.Diagnostics.Debug.WriteLine(intervals[k][0] + "    dequueue" + intervals[k][1]);
-                                    //System.Diagnostics.Debug.WriteLine("Case 3");
-                                    downTime += (17 - intervals[k][1].Hour) * 60 - intervals[k][1].Minute;
-                                    //System.Diagnostics.Debug.WriteLine((17 - intervals[k][1].Hour) * 60 - intervals[k][1].Minute);
-                                }
-                            }
-                        }
-                        m++;
+                        DataRow tempRow = dt.NewRow();
+                        tempRow["id"] = (int)dr3[0];
+                        tempRow["username"] = (string)dr3[1];
+                        tempRow["downTime"] = (int)(downTime);
+                        dt.Rows.Add(tempRow);
+                        i += 1;
                     }
 
-                    DataRow tempRow = dt.NewRow();
-                    tempRow["id"] = (int)dr3[0];
-                    tempRow["username"] = (string)dr3[1];
-                    tempRow["downTime"] = (int)(downTime);
-                    dt.Rows.Add(tempRow);
-                    i += 1;
+
+
                 }
                 MonthlyTechnicianGrid.DataSource = dt;
                 MonthlyTechnicianGrid.DataBind();
