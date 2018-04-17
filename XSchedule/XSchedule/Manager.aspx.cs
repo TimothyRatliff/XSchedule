@@ -295,11 +295,11 @@ public partial class Manager : System.Web.UI.Page
 
 
 
-        empty = 100 * (lastMinPrev - firstMinPrev) / (8.0 * 60);
+        empty = 100 * (lastMinPrev - firstMinPrev) / (29*8.0 * 60);
 
 
         result = string.Format("{00:0}", empty);
-        MonthlyTimeEmptyLabel.Text = " " + empty + "%";
+        MonthlyTimeEmptyLabel.Text = " " + result + "%";
 
         //get technician stats
         //for daily
