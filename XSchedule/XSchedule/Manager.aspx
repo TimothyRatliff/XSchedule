@@ -113,11 +113,10 @@
     </div>
 
     <div id="collapseQueue" class ="collapse row">
-        <asp:GridView ID="queueGrid"  DataKeyNames = "priority" class="table table-hover" runat="server" Caption="Job Queue" AutoGenerateColumns="False" >
+        <asp:GridView ID="queueGrid"  DataKeyNames = "priority,enqueueTime" class="table table-hover" runat="server" Caption="Job Queue" AutoGenerateColumns="False" >
             <Columns>
                 <asp:BoundField DataField="jobId" HeaderText="Job ID" />
                 <asp:BoundField DataField="baseEnqueueTime" HeaderText="Enqueue Time" />
-                <asp:BoundField DataField="enqueueTime" HeaderText="Enqueue Time" Visible="false"/>
 			    <asp:BoundField DataField="position" HeaderText="Queue Position" />
             </Columns>
         </asp:GridView>

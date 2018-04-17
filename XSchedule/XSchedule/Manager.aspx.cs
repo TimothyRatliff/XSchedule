@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 
 public partial class Manager : System.Web.UI.Page
 {
@@ -99,6 +100,7 @@ public partial class Manager : System.Web.UI.Page
                 
             }
         }
+
          emptyQueueDiv.Visible = (queueGrid.Rows.Count == 0);
 
         //average wait time of those fineshed yesterday
@@ -552,24 +554,45 @@ public partial class Manager : System.Web.UI.Page
         string select = "SELECT enqueueTime,priority from jobs where jobId="+queueGrid.DataKeys[i]["jobId"];
         System.Diagnostics.Debug.WriteLine(i);
 
-        DateTime baseTime=new DateTime();
-        DateTime.TryParse(queueGrid.Rows[i].Cells[1].Text, out baseTime);
+        //get index of job to change
+        int jobInd = -1;
+        int j = 0;
+        while (j < queueGrid.Rows.Count)
+        {
+            if (queueGrid.Rows[j].Cells[0].Text == jobEditField.Text)
+            {
+                jobInd = j;
+                j = queueGrid.Rows.Count;
+            }
+            j++;
+        }
+        DateTime baseTime = (DateTime)queueGrid.DataKeys[i]["enqueueTime"];//DateTime.ParseExact(queueGrid.DataKeys[i]["baseEnqueueTime"].ToString(), "yyyy-MM-dd HH:mm:ss tt", CultureInfo.InvariantCulture);
         System.Diagnostics.Debug.WriteLine(baseTime);
         //DateTime baseTime = (DateTime)queueGrid.DataKeys[i]["enqueueTime"];
-        DateTime newTime= baseTime.AddSeconds(-1);
+        DateTime newTime = new DateTime();
+        if (jobInd > i)
+            newTime = baseTime.AddSeconds(-1);
+        else if (jobInd == i)
+        {
+            newTime = baseTime;
+        }
+        else
+            newTime = baseTime.AddSeconds(1);
+
         System.Diagnostics.Debug.WriteLine("id" + queueGrid.Rows[i].Cells[0].Text);
         System.Diagnostics.Debug.WriteLine(newTime);
 
         string format = "yyyy-MM-dd HH:mm:ss";
         string timeString = newTime.ToString(format);
         string update = "Update Jobs set enqueueTime='" + timeString + "', priority=" + queueGrid.DataKeys[i]["priority"].ToString() + " where jobId =" + jobEditField.Text + ";";
+        System.Diagnostics.Debug.WriteLine(jobInd);
         System.Diagnostics.Debug.WriteLine(i);
         System.Diagnostics.Debug.WriteLine(timeString);
         System.Diagnostics.Debug.WriteLine(queueGrid.DataKeys[i]["priority"]);
         System.Diagnostics.Debug.WriteLine(jobEditField.Text);
         SqlCommand updateCmd = new SqlCommand(update, db);
         updateCmd.ExecuteNonQuery();
-
+        alertDiv1.InnerText = "Job Edited";
         //force query reload
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
         string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC";
