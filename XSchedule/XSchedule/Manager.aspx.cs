@@ -227,52 +227,49 @@ public partial class Manager : System.Web.UI.Page
 
         double empty;
 
-        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') order by baseEnqueueTime ASC";
+        //select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') order by baseEnqueueTime ASC";
+        
+        //last job before day started
+        select = "select top 1 minPrevEmpty from Jobs where baseEnqueueTime <'" + morning + "' order by baseEnqueueTime DESC";
         cmd = new SqlCommand(select, db);
         results = cmd.ExecuteScalar();
         if (results != null)
         {
             firstMinPrev = (long)results;
         }
-        
+
 
         //get last job of day
-        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') order by baseEnqueueTime DESC";
+        //select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') order by baseEnqueueTime DESC";
+
+        //first job  after day ended
+        select = "select top 1 minPrevEmpty from Jobs where baseEnqueueTime >'" + night + "' order by baseEnqueueTime ASC";
         cmd = new SqlCommand(select, db);
         results = cmd.ExecuteScalar();
+        if(results == null)
+        {
+            select = "select top 1 minPrevEmpty from Jobs where baseEnqueueTime <'" + night + "' order by baseEnqueueTime DESC";
+            cmd = new SqlCommand(select, db);
+            results = cmd.ExecuteScalar();
+            
+        }
 
-        //count to check edge cases
-        select = "select count(*) as numUnstarted from Jobs where enqueueTime<'"+day+ "' and checkedIn IS NULL";
-        cmd = new SqlCommand(select, db);
-        int numUnstarted = (int)cmd.ExecuteScalar();
+        lastMinPrev = (long)results;
 
-        if (results != null)
-        {
-            lastMinPrev = (long)results;
-        }
-        if (firstMinPrev != -1 && lastMinPrev != -1)
-        {
-            empty = 100*(lastMinPrev - firstMinPrev) / (24 * 60);
-        }
-        else if (count > 0)
-        {
-            empty = 0.00;
-        }
-        else
-        {
-            empty = 100.00;
-        }
-        result = string.Format("{0:00}", empty);
-        DailyTimeEmptyLabel.Text = result;
+
+
+        empty = 100*(lastMinPrev - firstMinPrev) / (8.0 * 60);
+
+
+        result = string.Format("{00:0}", empty);
+        DailyTimeEmptyLabel.Text = " "+result+"%";
+
         //monthly
 
-        //get first job of day
-        firstMinPrev = -1;
-        lastMinPrev = -1;
-        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + month + "') and month(baseEnqueueTime) = month('" + month + "') order by baseEnqueueTime ASC";
+        //last job before day started
+        select = "select top 1 minPrevEmpty from Jobs where baseEnqueueTime <'" + week0 + "' order by baseEnqueueTime DESC";
         cmd = new SqlCommand(select, db);
         results = cmd.ExecuteScalar();
-
         if (results != null)
         {
             firstMinPrev = (long)results;
@@ -280,33 +277,29 @@ public partial class Manager : System.Web.UI.Page
 
 
         //get last job of day
-        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + month + "') and month(baseEnqueueTime) = month('" + month + "') order by baseEnqueueTime DESC";
+        //select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') order by baseEnqueueTime DESC";
+
+        //first job  after day ended
+        select = "select top 1 minPrevEmpty from Jobs where baseEnqueueTime >'" + week4 + "' order by baseEnqueueTime ASC";
         cmd = new SqlCommand(select, db);
         results = cmd.ExecuteScalar();
+        if (results == null)
+        {
+            select = "select top 1 minPrevEmpty from Jobs where baseEnqueueTime <'" + week4 + "' order by baseEnqueueTime DESC";
+            cmd = new SqlCommand(select, db);
+            results = cmd.ExecuteScalar();
 
-        //count to check edge cases
-        select = "select count(*) as numUnstarted from Jobs where enqueueTime<'" + month + "' and checkedIn IS NULL";
-        cmd = new SqlCommand(select, db);
-        numUnstarted = (int)cmd.ExecuteScalar();
+        }
 
-        if (results != null)
-        {
-            lastMinPrev = (long)results;
-        }
-        if (firstMinPrev != -1 && lastMinPrev != -1)
-        {
-            empty = 100 * (lastMinPrev - firstMinPrev) / (DateTime.DaysInMonth(lastM.Year,lastM.Month)*24 * 60);
-        }
-        else if (count > 0)
-        {
-            empty = 0.00;
-        }
-        else
-        {
-            empty = 100.00;
-        }
-        result = string.Format("{0:00}", empty);
-        MonthlyTimeEmptyLabel.Text = result;
+        lastMinPrev = (long)results;
+
+
+
+        empty = 100 * (lastMinPrev - firstMinPrev) / (8.0 * 60);
+
+
+        result = string.Format("{00:0}", empty);
+        MonthlyTimeEmptyLabel.Text = " " + empty + "%";
 
         //get technician stats
         //for daily
