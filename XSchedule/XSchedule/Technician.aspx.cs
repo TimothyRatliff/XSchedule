@@ -8,7 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 public partial class Technician : System.Web.UI.Page
 {
-    TimeSpan timeWithout95(DateTime start, DateTime end)
+    TimeSpan TimeWithout95(DateTime start, DateTime end)
     {
         TimeSpan diff = new TimeSpan();
 
@@ -58,7 +58,7 @@ public partial class Technician : System.Web.UI.Page
         alertDiv1.Visible = true;
 
         string select2 = "SELECT jobId from Jobs WHERE completed = 0 and technicianId = " + Session["CurrentUser"];
-        string select3 = "SELECT jobId,issuedBy,enqueueTime from Jobs WHERE completed = 0 and technicianId = " + Session["CurrentUser"];
+        string select3 = "SELECT jobId,issuedBy,baseEnqueueTime from Jobs WHERE completed = 0 and technicianId = " + Session["CurrentUser"];
         cmd = new SqlCommand(select2, db);
 
         var hasJob =cmd.ExecuteScalar();
@@ -100,7 +100,7 @@ public partial class Technician : System.Web.UI.Page
             CheckInButton.Visible = false;
             CheckOutButton.Visible = true;
 
-            string select3 = "SELECT jobId,issuedBy,enqueueTime from Jobs WHERE jobId = " + val;
+            string select3 = "SELECT jobId,issuedBy,baseEnqueueTime from Jobs WHERE jobId = " + val;
             cmd = new SqlCommand(select3, db);
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -160,7 +160,7 @@ public partial class Technician : System.Web.UI.Page
 
         DateTime start = (DateTime)cmd.ExecuteScalar();
         DateTime end = time;
-        TimeSpan diff = timeWithout95(start, end);
+        TimeSpan diff = TimeWithout95(start, end);
         //TimeSpan startTime = start.TimeOfDay;
         //TimeSpan endTime = time.TimeOfDay;
         //TimeSpan diff = endTime.Subtract(startTime);
@@ -188,10 +188,12 @@ public partial class Technician : System.Web.UI.Page
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-        
+
+        /* for debugging
+       
         SqlConnection db = new SqlConnection(con);
         db.Open();
-        string select = "select * from Jobs Order By priority DESC, enqueueTime ASC";
+        string select = "select * from Users";
         SqlCommand cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -204,6 +206,7 @@ public partial class Technician : System.Web.UI.Page
             }
         }
         db.Close();
+        */
     }
 
 }

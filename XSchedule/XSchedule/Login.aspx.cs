@@ -18,6 +18,7 @@ public partial class Login : System.Web.UI.Page
 
     protected void Button1_Click(object sender, EventArgs e)
     {
+        /* for debugging
        
         SqlConnection db = new SqlConnection(con);
         db.Open();
@@ -34,6 +35,7 @@ public partial class Login : System.Web.UI.Page
             }
         }
         db.Close();
+        */
     }
 
 

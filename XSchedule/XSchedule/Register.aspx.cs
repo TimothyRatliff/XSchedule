@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 
 public partial class Register : System.Web.UI.Page
 {
+    string con = "Data Source=den1.mssql3.gear.host;Initial Catalog=TestDBXSCHEDULE1;User Id=testdbxschedule1; Password=By2up3~f6!Wy";
+
     protected void Page_Load(object sender, EventArgs e)
     {
 
@@ -23,7 +25,7 @@ public partial class Register : System.Web.UI.Page
 
         if(r.IsMatch(usernameField.Text) && r.IsMatch(passwordField.Text))
             {
-            string con = "Data Source=den1.mssql3.gear.host;Initial Catalog=TestDBXSCHEDULE1;User Id=testdbxschedule1; Password=By2up3~f6!Wy";
+
             SqlConnection db = new SqlConnection(con);
             db.Open();
             int type = 0;
@@ -78,7 +80,8 @@ public partial class Register : System.Web.UI.Page
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-        string con = "Data Source=den1.mssql3.gear.host;Initial Catalog=TestDBXSCHEDULE1;User Id=testdbxschedule1; Password=By2up3~f6!Wy";
+        /* for debugging
+       
         SqlConnection db = new SqlConnection(con);
         db.Open();
         string select = "select * from Users";
@@ -94,6 +97,7 @@ public partial class Register : System.Web.UI.Page
             }
         }
         db.Close();
+        */
     }
 
     protected void LogInButton_Click(object sender, EventArgs e)

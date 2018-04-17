@@ -10,6 +10,37 @@ using System.Drawing;
 
 public partial class Customer : System.Web.UI.Page
 {
+    TimeSpan TimeWithout95(DateTime start, DateTime end)
+    {
+        TimeSpan diff = new TimeSpan();
+
+        DateTime endOfDay = new DateTime(2000, 1, 1, 17, 0, 0);
+        DateTime startOfDay = new DateTime(2000, 1, 1, 9, 0, 0);
+
+
+        if (start.TimeOfDay < end.TimeOfDay)
+        {
+            diff += (end.TimeOfDay - start.TimeOfDay);
+            start += (end.TimeOfDay - start.TimeOfDay);
+
+            int numDays = (end.Date.Subtract(start.Date)).Days;
+            diff += (new TimeSpan(numDays, 0, 0, 0));
+
+        }
+
+        else
+        {
+            diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (end.TimeOfDay - startOfDay.TimeOfDay);
+
+            //minus one because the previous calculation added a day
+            int numDays = (end.Date.Subtract(start.Date)).Days;
+            diff += (new TimeSpan(numDays - 1, 0, 0, 0));
+
+        }
+
+        return diff;
+    }
+
     string con = "Data Source=den1.mssql3.gear.host;Initial Catalog=TestDBXSCHEDULE1;User Id=testdbxschedule1; Password=By2up3~f6!Wy";
 
     protected void Page_Load(object sender, EventArgs e)
@@ -28,7 +59,7 @@ public partial class Customer : System.Web.UI.Page
         alertDiv1.InnerText = "Welcome " + name;
 
         //load completed
-        select = "select jobId, enqueueTime,checkedIn,dequeueTime,(select username from Users U where U.id = J.technicianId) as technician from Jobs J where issuedBy = " + Session["CurrentUser"] + " and completed = 1";
+        select = "select jobId, baseEnqueueTime,checkedIn,dequeueTime,(select username from Users U where U.id = J.technicianId) as technician from Jobs J where issuedBy = " + Session["CurrentUser"] + " and completed = 1";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -43,7 +74,7 @@ public partial class Customer : System.Web.UI.Page
       
         noCompletedDiv.Visible = (completedJobs.Rows.Count == 0);
         //load started
-        select = "select jobId,enqueueTime, checkedIn,(select username from Users U where U.id = J.technicianId) as technician  from Jobs J where issuedBy = " + Session["CurrentUser"] + " and technicianId IS NOT NULL and completed = 0";
+        select = "select jobId,baseEnqueueTime, checkedIn,(select username from Users U where U.id = J.technicianId) as technician  from Jobs J where issuedBy = " + Session["CurrentUser"] + " and technicianId IS NOT NULL and completed = 0";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -59,7 +90,7 @@ public partial class Customer : System.Web.UI.Page
         //load unstarted
         //subselect counts num of jobs ahead in queue
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        select = "select jobId, enqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By priority, jobId";
+        select = "select jobId, baseEnqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By priority, jobId";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -78,7 +109,7 @@ public partial class Customer : System.Web.UI.Page
 
     protected void SubmitButton_Click(object sender, EventArgs e)
     {
-        
+
         SqlConnection db = new SqlConnection(con);
         db.Open();
 
@@ -93,11 +124,11 @@ public partial class Customer : System.Web.UI.Page
         {
             priority = 6;
         }
-        else if(numJobs > 2)
+        else if (numJobs > 2)
         {
             priority = 4;
         }
-        else if(numJobs > 0)
+        else if (numJobs > 0)
         {
             priority = 2;
         }
@@ -122,14 +153,47 @@ public partial class Customer : System.Web.UI.Page
         string date = time.ToString(format);
         Console.WriteLine(date);
 
-        string insert = "insert into Jobs (enqueueTime,complexity,priority,issuedBy) values ('" + date + "'," + complexity + "," + priority + ", (select id from Users where id ="+Session["CurrentUser"]+"))";
+        long minPrevEmpty = 0;
+        // checking if queue was empty and new empty time
+        select = "select count(*) as numUnstarted from Jobs where checkedIn IS NULL";
+        cmd = new SqlCommand(select, db);
+        int numUnstarted = (int)cmd.ExecuteScalar();
+
+        select = "select TOP 1 minPrevEmpty from Jobs where checkedIn IS NOT NULL order by checkedIn DESC";
+        cmd = new SqlCommand(select, db);
+        var results = cmd.ExecuteScalar();
+        if (results != null) {
+            minPrevEmpty = (long)results;
+          }
+
+        select = "select TOP 1 minPrevEmpty from Jobs where checkedIn IS NULL order by checkedIn DESC";
+        cmd = new SqlCommand(select, db);
+        results = cmd.ExecuteScalar();
+        if (results != null)
+        {
+            minPrevEmpty = (long)results;
+        }
+
+        select = "select TOP 1 checkedIn from Jobs where checkedIn IS NOT NULL order by checkedIn DESC";
+        cmd = new SqlCommand(select, db);
+        DateTime checkInLast = (DateTime)cmd.ExecuteScalar();
+
+        TimeSpan diff = TimeWithout95(checkInLast, time);
+        long newMinPrev = minPrevEmpty;
+        if (numUnstarted == 0)
+        {
+            newMinPrev += (diff.Days) *8 * 60 + (diff.Hours) * 60 + (diff.Minutes);
+        }
+
+
+        string insert = "insert into Jobs (enqueueTime,baseEnqueueTime,complexity,priority,issuedBy,minPrevEmpty) values ('" + date + "','" + date + "'," + complexity + "," + priority + ", (select id from Users where id ="+Session["CurrentUser"]+"),"+newMinPrev+")";
         cmd = new SqlCommand(insert, db);
         int m = cmd.ExecuteNonQuery();
 
         //load unstarted
         //subselect counts num of jobs ahead in queue
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        select = "select jobId, enqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By priority, jobId";
+        select = "select jobId, baseEnqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By position";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -147,76 +211,16 @@ public partial class Customer : System.Web.UI.Page
         alertDiv1.InnerText = "Job Created!";
         noUnstartedDiv.Visible = false;
     }
-    /*
-    protected void ViewCompleted_Click(object sender, EventArgs e)
-    {
-        
-        SqlConnection db = new SqlConnection(con);
-        db.Open();
-        string select = "select jobId, enqueueTime,checkedIn,dequeueTime,(select username from Users U where U.id = J.technicianId) as technician from Jobs J where issuedBy = " + Session["CurrentUser"] + " and completed = 1";
-        SqlCommand cmd = new SqlCommand(select, db);
-        using (SqlCommand command = new SqlCommand(select, db))
-        {
-            //add parameters and their values
-
-            using (SqlDataReader dr = command.ExecuteReader())
-            {
-                completedJobs.DataSource = dr;
-                completedJobs.DataBind();
-            }
-        }
-
-        db.Close();
-    }
-    protected void ViewStarted_Click(object sender, EventArgs e)
-    {
-      
-        SqlConnection db = new SqlConnection(con);
-        db.Open();
-        string select = "select jobId,enqueueTime, checkedIn,(select username from Users U where U.id = J.technicianId) as technician  from Jobs J where issuedBy = " + Session["CurrentUser"] + " and technicianId IS NOT NULL and completed = 0";
-        SqlCommand cmd = new SqlCommand(select, db);
-        using (SqlCommand command = new SqlCommand(select, db))
-        {
-            //add parameters and their values
-
-            using (SqlDataReader dr = command.ExecuteReader())
-            {
-                startedJobs.DataSource = dr;
-                startedJobs.DataBind();
-            }
-        }
-
-        db.Close();
-    }
-    protected void ViewUnstarted_Click(object sender, EventArgs e)
-    {
-        
-        SqlConnection db = new SqlConnection(con);
-        db.Open();
-        //subselect counts num of jobs ahead in queue
-        string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        string select = "select jobId, enqueueTime,"+subSelect+" from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By priority, jobId";
-        SqlCommand cmd = new SqlCommand(select, db);
-        using (SqlCommand command = new SqlCommand(select, db))
-        {
-            //add parameters and their values
-
-            using (SqlDataReader dr = command.ExecuteReader())
-            {
-                unstartedJobs.DataSource = dr;
-                unstartedJobs.DataBind();
-            }
-        }
-
-        db.Close();
-    }
-    */
+    
     protected void Button1_Click(object sender, EventArgs e)
     {
+
+
+        /* for debugging
        
         SqlConnection db = new SqlConnection(con);
         db.Open();
-        string select = "select * from Jobs Order By priority ASC";
+        string select = "select * from Users";
         SqlCommand cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -229,6 +233,7 @@ public partial class Customer : System.Web.UI.Page
             }
         }
         db.Close();
+        */
     }
 
     protected void unstartedJobs_RowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -244,7 +249,7 @@ public partial class Customer : System.Web.UI.Page
         //load unstarted
         //subselect counts num of jobs ahead in queue
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        string select = "select jobId, enqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By priority, jobId";
+        string select = "select jobId, enqueueTime,baseEnqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By priority, jobId";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {

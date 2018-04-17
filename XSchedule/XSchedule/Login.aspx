@@ -30,14 +30,13 @@
       </div>
 
     <div>
-        <asp:GridView ID="testGV"  runat="server">
+<%--      for debugging  <asp:GridView ID="testGV"  runat="server">
             <Columns>
 
             </Columns>
         </asp:GridView>
     
-    
-        <asp:Button ID="TestButton" runat="server" OnClick="Button1_Click" Text="Test" />
+        <asp:Button ID="TestButton" runat="server" OnClick="Button1_Click" Text="Test" />--%>
     
     </div>
         <p>

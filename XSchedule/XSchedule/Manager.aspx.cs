@@ -15,7 +15,7 @@ public partial class Manager : System.Web.UI.Page
 {
 
 }*/
-    TimeSpan timeWithout95(DateTime start, DateTime end)
+    TimeSpan TimeWithout95(DateTime start, DateTime end)
     {
         TimeSpan diff = new TimeSpan();
 
@@ -86,7 +86,7 @@ public partial class Manager : System.Web.UI.Page
 
         //subselect counts num of jobs ahead in queue
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        string select2 = "select jobId, enqueueTime," + subSelect + " from Jobs J where checkedIn IS NULL Order By priority, jobId";
+        string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC";
 
         using (SqlCommand command = new SqlCommand(select2, db))
         {
@@ -96,23 +96,32 @@ public partial class Manager : System.Web.UI.Page
             {
                 queueGrid.DataSource = dr;
                 queueGrid.DataBind();
+                
             }
         }
+         emptyQueueDiv.Visible = (queueGrid.Rows.Count == 0);
 
         //average wait time of those fineshed yesterday
-        string day = yesterday + " 00:00:00";
+        string day = yesterday + " 00:00:00.000";
 
 
         select = "select SUM(DATEDIFF(minute,checkedIn,dequeueTime)) as totalWait from Jobs where year(dequeueTime) = year('" + day + "') and month(dequeueTime) = month('" + day + "') and day(dequeueTime) = day('" + day + "') and completed = 1";
         cmd = new SqlCommand(select, db);
-        int totalMinutes = (int)cmd.ExecuteScalar();
-
+        object results = cmd.ExecuteScalar();
+        int totalMinutes = 0;
+        if (results.ToString() != "")
+        {
+            totalMinutes = (int)results;
+        }
+        System.Diagnostics.Debug.WriteLine(totalMinutes);
         select = "select count(*) from Jobs where year(dequeueTime) = year('" + day + "') and month(dequeueTime) = month('" + day + "') and day(dequeueTime) = day('" + day + "')";
         cmd = new SqlCommand(select, db);
         int count = (int)cmd.ExecuteScalar();
+        if (count == 0)
+            count = 1; 
 
         double temp = (totalMinutes / (count * 60.0));
-        string result = string.Format("{0:00}", temp);
+        string result = string.Format("{00:0}", temp);
         DailyAvWaitLabel.Text = " " + result + " hours";//"count:" + count + " total:" + temp + "yesterday:" + yesterday;// result;
 
         //for the month
@@ -134,19 +143,19 @@ public partial class Manager : System.Web.UI.Page
         string morning = yesterday + " 00:00:00";
         string startOfDay = yesterday + " 09:00:00";
         string endOfDay = yesterday + " 17:00:00";
-        select = "select count(*) from Jobs where enqueueTime<'" + morning + "' and (checkedIn >'" + morning + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + morning + "' and (checkedIn >'" + morning + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         int count1 = (int)cmd.ExecuteScalar();
 
         string noon = yesterday + " 12:00:00";
 
-        select = "select count(*) from Jobs where enqueueTime<'" + noon + "' and (checkedIn >'" + noon + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + noon + "' and (checkedIn >'" + noon + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         int count2 = (int)cmd.ExecuteScalar();
 
         string night = yesterday + " 23:59:59";
 
-        select = "select count(*) from Jobs where enqueueTime<'" + night + "' and (checkedIn >'" + night + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + night + "' and (checkedIn >'" + night + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         int count3 = (int)cmd.ExecuteScalar();
 
@@ -159,31 +168,31 @@ public partial class Manager : System.Web.UI.Page
 
         string week0 = lastMonth + "-01 00:00:00";
 
-        select = "select count(*) from Jobs where enqueueTime<'" + week0 + "' and (checkedIn >'" + week0 + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + week0 + "' and (checkedIn >'" + week0 + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         count1 = (int)cmd.ExecuteScalar();
 
         string week1 = lastMonth + "-08 00:00:00";
 
-        select = "select count(*) from Jobs where enqueueTime<'" + week1 + "' and (checkedIn >'" + week1 + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + week1 + "' and (checkedIn >'" + week1 + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         count2 = (int)cmd.ExecuteScalar();
 
         string week2 = lastMonth + "-15 00:00:00";
 
-        select = "select count(*) from Jobs where enqueueTime<'" + week2 + "' and (checkedIn >'" + week2 + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + week2 + "' and (checkedIn >'" + week2 + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         count3 = (int)cmd.ExecuteScalar();
 
         string week3 = lastMonth + "-22 00:00:00";
 
-        select = "select count(*) from Jobs where enqueueTime<'" + week3 + "' and (checkedIn >'" + week3 + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + week3 + "' and (checkedIn >'" + week3 + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         int count4 = (int)cmd.ExecuteScalar();
 
         string week4 = lastMonth + "-28 23:00:00";
 
-        select = "select count(*) from Jobs where enqueueTime<'" + week4 + "' and (checkedIn >'" + week4 + "' or checkedIn IS NULL)";
+        select = "select count(*) from Jobs where baseEnqueueTime<'" + week4 + "' and (checkedIn >'" + week4 + "' or checkedIn IS NULL)";
         cmd = new SqlCommand(select, db);
         int count5 = (int)cmd.ExecuteScalar();
 
@@ -196,14 +205,14 @@ public partial class Manager : System.Web.UI.Page
         //jobs addressed same day
 
 
-        select = "select count(jobId) as num from Jobs where year(enqueueTime) = year('" + day + "') and month(enqueueTime) = month('" + day + "') and day(enqueueTime) = day('" + day + "') and  year(enqueueTime) = year(checkedIn) and  month(enqueueTime) = month(checkedIn) and  day(enqueueTime) = day(checkedIn) ";
+        select = "select count(jobId) as num from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') and  year(baseEnqueueTime) = year(checkedIn) and  month(baseEnqueueTime) = month(checkedIn) and  day(baseEnqueueTime) = day(checkedIn) ";
         cmd = new SqlCommand(select, db);
 
         result = cmd.ExecuteScalar().ToString();
         DailySameDayLabel.Text = result;
 
         //month
-        select = "select count(jobId) as num from Jobs where year(enqueueTime) = year('" + month + "') and month(enqueueTime) = month('" + month + "') and  year(enqueueTime) = year(checkedIn) and  month(enqueueTime) = month(checkedIn) and  day(enqueueTime) = day(checkedIn) ";
+        select = "select count(jobId) as num from Jobs where year(baseEnqueueTime) = year('" + month + "') and month(baseEnqueueTime) = month('" + month + "') and  year(baseEnqueueTime) = year(checkedIn) and  month(baseEnqueueTime) = month(checkedIn) and  day(baseEnqueueTime) = day(checkedIn) ";
         cmd = new SqlCommand(select, db);
 
         result = cmd.ExecuteScalar().ToString();
@@ -211,6 +220,93 @@ public partial class Manager : System.Web.UI.Page
 
         //percent time empty
 
+        //daily
+        //get first job of day
+        long firstMinPrev = -1;
+        long lastMinPrev = -1;
+
+        double empty;
+
+        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') order by baseEnqueueTime ASC";
+        cmd = new SqlCommand(select, db);
+        results = cmd.ExecuteScalar();
+        if (results != null)
+        {
+            firstMinPrev = (long)results;
+        }
+        
+
+        //get last job of day
+        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') order by baseEnqueueTime DESC";
+        cmd = new SqlCommand(select, db);
+        results = cmd.ExecuteScalar();
+
+        //count to check edge cases
+        select = "select count(*) as numUnstarted from Jobs where enqueueTime<'"+day+ "' and checkedIn IS NULL";
+        cmd = new SqlCommand(select, db);
+        int numUnstarted = (int)cmd.ExecuteScalar();
+
+        if (results != null)
+        {
+            lastMinPrev = (long)results;
+        }
+        if (firstMinPrev != -1 && lastMinPrev != -1)
+        {
+            empty = 100*(lastMinPrev - firstMinPrev) / (24 * 60);
+        }
+        else if (count > 0)
+        {
+            empty = 0.00;
+        }
+        else
+        {
+            empty = 100.00;
+        }
+        result = string.Format("{0:00}", empty);
+        DailyTimeEmptyLabel.Text = result;
+        //monthly
+
+        //get first job of day
+        firstMinPrev = -1;
+        lastMinPrev = -1;
+        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + month + "') and month(baseEnqueueTime) = month('" + month + "') order by baseEnqueueTime ASC";
+        cmd = new SqlCommand(select, db);
+        results = cmd.ExecuteScalar();
+
+        if (results != null)
+        {
+            firstMinPrev = (long)results;
+        }
+
+
+        //get last job of day
+        select = "select top 1 minPrevEmpty from Jobs where year(baseEnqueueTime) = year('" + month + "') and month(baseEnqueueTime) = month('" + month + "') order by baseEnqueueTime DESC";
+        cmd = new SqlCommand(select, db);
+        results = cmd.ExecuteScalar();
+
+        //count to check edge cases
+        select = "select count(*) as numUnstarted from Jobs where enqueueTime<'" + month + "' and checkedIn IS NULL";
+        cmd = new SqlCommand(select, db);
+        numUnstarted = (int)cmd.ExecuteScalar();
+
+        if (results != null)
+        {
+            lastMinPrev = (long)results;
+        }
+        if (firstMinPrev != -1 && lastMinPrev != -1)
+        {
+            empty = 100 * (lastMinPrev - firstMinPrev) / (DateTime.DaysInMonth(lastM.Year,lastM.Month)*24 * 60);
+        }
+        else if (count > 0)
+        {
+            empty = 0.00;
+        }
+        else
+        {
+            empty = 100.00;
+        }
+        result = string.Format("{0:00}", empty);
+        MonthlyTimeEmptyLabel.Text = result;
 
         //get technician stats
         //for daily
@@ -430,9 +526,11 @@ public partial class Manager : System.Web.UI.Page
     protected void Button1_Click(object sender, EventArgs e)
     {
 
+        /* for debugging
+       
         SqlConnection db = new SqlConnection(con);
         db.Open();
-        string select = "select * from Jobs Order By priority ASC";
+        string select = "select * from Users";
         SqlCommand cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -444,6 +542,58 @@ public partial class Manager : System.Web.UI.Page
                 testGV.DataBind();
             }
         }
+        db.Close();
+        */
+    }
+
+    protected void JobEditButton_Click(object sender, EventArgs e)
+    {
+
+        SqlConnection db = new SqlConnection(con);
+        db.Open();
+
+
+        //crappy way to find key
+        int i = 1;
+        int.TryParse(newPositionField.Text, out i);
+        string select = "SELECT enqueueTime,priority from jobs where jobId="+queueGrid.DataKeys[i]["jobId"];
+        System.Diagnostics.Debug.WriteLine(i);
+
+        DateTime baseTime=new DateTime();
+        DateTime.TryParse(queueGrid.Rows[i].Cells[1].Text, out baseTime);
+        System.Diagnostics.Debug.WriteLine(baseTime);
+        //DateTime baseTime = (DateTime)queueGrid.DataKeys[i]["enqueueTime"];
+        DateTime newTime= baseTime.AddSeconds(-1);
+        System.Diagnostics.Debug.WriteLine("id" + queueGrid.Rows[i].Cells[0].Text);
+        System.Diagnostics.Debug.WriteLine(newTime);
+
+        string format = "yyyy-MM-dd HH:mm:ss";
+        string timeString = newTime.ToString(format);
+        string update = "Update Jobs set enqueueTime='" + timeString + "', priority=" + queueGrid.DataKeys[i]["priority"].ToString() + " where jobId =" + jobEditField.Text + ";";
+        System.Diagnostics.Debug.WriteLine(i);
+        System.Diagnostics.Debug.WriteLine(timeString);
+        System.Diagnostics.Debug.WriteLine(queueGrid.DataKeys[i]["priority"]);
+        System.Diagnostics.Debug.WriteLine(jobEditField.Text);
+        SqlCommand updateCmd = new SqlCommand(update, db);
+        updateCmd.ExecuteNonQuery();
+
+        //force query reload
+        string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
+        string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC";
+
+        using (SqlCommand command = new SqlCommand(select2, db))
+        {
+            //add parameters and their values
+
+            using (SqlDataReader dr = command.ExecuteReader())
+            {
+                queueGrid.DataSource = dr;
+                queueGrid.DataBind();
+
+            }
+        }
+
+
         db.Close();
     }
 
