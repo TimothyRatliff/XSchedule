@@ -89,7 +89,7 @@ h1,h2 {
     
     <div class="row">
         <div class="col-md-4">
-            <h2 style ="color:gold">GitHub </h2>
+            <h2 style ="color:purple">GitHub </h2>
             <p class="lead">
                 Check out XSchedule's GitHub repository.
             </p>
@@ -98,7 +98,7 @@ h1,h2 {
             </p>
         </div>
         <div class="col-md-4">
-            <h2 style ="color:gold">Elastic Beanstalk</h2>
+            <h2 style ="color:purple">Elastic Beanstalk</h2>
             <p class="lead">
                 XSchedule is hosted entirely on Amazon Web Services!
             </p>
@@ -107,7 +107,7 @@ h1,h2 {
             </p>
         </div>
         <div class="col-md-4">
-            <h2 style ="color:gold">Project Wiki</h2>
+            <h2 style ="color:purple">Project Wiki</h2>
             <p class="lead">
                 Want to learn more about how XSchedule works?
             </p>
