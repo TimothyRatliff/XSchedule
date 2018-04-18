@@ -114,7 +114,12 @@ public partial class Technician : System.Web.UI.Page
             cmd = new SqlCommand(select3, db);
 
             string thisCust = cmd.ExecuteScalar().ToString();
-            CurrentJobLabel.InnerText = "Current Job: Job ID  " + thisJobId + " Issued By: " + thisCust + "  Enqueue:" + thisJobEnq;
+            CurrentJobLabel.InnerText = "Current Job ->" +    
+                "Job ID  " + thisJobId +
+                "|" + 
+                " Issued By: " + thisCust +
+                "|" + 
+                "  Enqueue:" + thisJobEnq;
             
 
             DateTime time = DateTime.Now;
@@ -181,7 +186,7 @@ public partial class Technician : System.Web.UI.Page
         //and 30 + 10*years accounts for the increased pay based on experience
         float pay = hoursWorked * (30 + 10 * years);
         string payString = string.Format("{0:00}",pay);
-        CurrentJobLabel.InnerText = "Hours worked = " + hoursWorked + " cost = " + payString;// + "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds + "Milli  :" + diff.Milliseconds + "days :" + start.Day + "Hours :" + start.Hour + "Minutes :" + start.Minute + "Seconds :" + start.Second + "Milli  :" + start.Millisecond + "days :" + end.Day + "Hours :" + end.Hour +"Minutes :"+end.Minute + "Seconds :" + end.Second + "Milli  :" + end.Millisecond;
+        CurrentJobLabel.InnerText = "Hours worked = " + hoursWorked +"|" + " Cost = $" + payString;// + "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds + "Milli  :" + diff.Milliseconds + "days :" + start.Day + "Hours :" + start.Hour + "Minutes :" + start.Minute + "Seconds :" + start.Second + "Milli  :" + start.Millisecond + "days :" + end.Day + "Hours :" + end.Hour +"Minutes :"+end.Minute + "Seconds :" + end.Second + "Milli  :" + end.Millisecond;
         //debug string (Timespan seems buggy) "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds +"Milli  :" + diff.Milliseconds;
         db.Close();
     }
