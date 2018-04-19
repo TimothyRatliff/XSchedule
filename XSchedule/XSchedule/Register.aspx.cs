@@ -14,7 +14,6 @@ public partial class Register : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-
     }
 
 
@@ -43,7 +42,7 @@ public partial class Register : System.Web.UI.Page
             }
             else
             {
-                DateTime time = DateTime.Now;
+                DateTime time = (DateTime.Now).AddHours(-6);
                 string format = "yyyy-MM-dd";
                 string date = time.ToString(format);
 

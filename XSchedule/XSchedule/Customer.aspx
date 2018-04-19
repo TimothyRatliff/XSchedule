@@ -49,11 +49,13 @@
 			    <asp:BoundField DataField="checkedIn" HeaderText="Job Started" />
                 <asp:BoundField DataField="dequeueTime" HeaderText="Finished" />
 			    <asp:BoundField DataField="technician" HeaderText="Technician" />
+                <asp:BoundField DataField="cost" HeaderText="Cost ($)" />
             </Columns>
         </asp:GridView>
     </div>
 
-    <div runat="server" id="noCompletedDiv" class="alert alert-warning" visible="false">
+    <div runat="server" id="noCompletedDiv" class="alert alert-warning" 
+        visible="false" aria-posinset="center" style="text-align: center">
          No Jobs Completed
     </div>
 
@@ -71,7 +73,8 @@
         </asp:GridView>
     </div>
 
-    <div runat="server" id="noStartedDiv" class="alert alert-warning" visible="false">
+    <div runat="server" id="noStartedDiv" class="alert alert-warning" 
+        visible="false" style="text-align: center">
          No Jobs Started
     </div>
 
@@ -89,7 +92,8 @@
             </Columns>
         </asp:GridView>
     </div>
-    <div runat="server" id="noUnstartedDiv" class="alert alert-warning" visible="false">
+    <div runat="server" id="noUnstartedDiv" class="alert alert-warning" 
+        visible="false" aria-orientation="horizontal" style="text-align: center">
          No Jobs Unstarted
     </div>
 

@@ -103,7 +103,7 @@
             <Columns>
                 <asp:BoundField DataField="id" HeaderText="ID" />
                 <asp:BoundField DataField="username" HeaderText="Name" />
-                <asp:BoundField DataField="downTime" HeaderText="Down Time" />
+                <asp:BoundField DataField="downTime" HeaderText="Down Time (Minutes)" />
             </Columns>
         </asp:GridView>
     </div>

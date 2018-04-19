@@ -18,7 +18,7 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="password">Password:</label>
         <div class="col-sm-10"> 
-            <asp:TextBox ID="passwordField" runat="server"></asp:TextBox>
+            <asp:TextBox ID="passwordField" TextMode="Password" runat="server"></asp:TextBox>
         </div>
       </div>
       
