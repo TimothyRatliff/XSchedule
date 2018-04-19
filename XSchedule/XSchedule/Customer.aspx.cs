@@ -17,25 +17,34 @@ public partial class Customer : System.Web.UI.Page
         DateTime endOfDay = new DateTime(2000, 1, 1, 17, 0, 0);
         DateTime startOfDay = new DateTime(2000, 1, 1, 9, 0, 0);
 
-
-        if (start.TimeOfDay < end.TimeOfDay)
+        if (end.TimeOfDay > endOfDay.TimeOfDay)
         {
-            diff += (end.TimeOfDay - start.TimeOfDay);
-            start += (end.TimeOfDay - start.TimeOfDay);
 
-            int numDays = (end.Date.Subtract(start.Date)).Days;
-            diff += (new TimeSpan(numDays, 0, 0, 0));
+                diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (endOfDay.TimeOfDay - startOfDay.TimeOfDay);
+                //minus one because the previous calculation added a day
+                int numDays = (end.Date.Subtract(start.Date)).Days;
+                diff += (new TimeSpan(numDays - 1, 0, 0, 0));
 
         }
+        else {
+            if (start.TimeOfDay < end.TimeOfDay)
+            {
+                diff += (end.TimeOfDay - start.TimeOfDay);
+                start += (end.TimeOfDay - start.TimeOfDay);
 
-        else
-        {
-            diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (end.TimeOfDay - startOfDay.TimeOfDay);
+                int numDays = (end.Date.Subtract(start.Date)).Days;
+                diff += (new TimeSpan(numDays, 0, 0, 0));
 
-            //minus one because the previous calculation added a day
-            int numDays = (end.Date.Subtract(start.Date)).Days;
-            diff += (new TimeSpan(numDays - 1, 0, 0, 0));
+            }
 
+            else
+            {
+                diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (end.TimeOfDay - startOfDay.TimeOfDay);
+                //minus one because the previous calculation added a day
+                int numDays = (end.Date.Subtract(start.Date)).Days;
+                diff += (new TimeSpan(numDays - 1, 0, 0, 0));
+
+            }
         }
 
         return diff;
@@ -59,7 +68,7 @@ public partial class Customer : System.Web.UI.Page
         alertDiv1.InnerText = "Welcome " + name;
 
         //load completed
-        select = "select jobId, baseEnqueueTime,checkedIn,dequeueTime,(select username from Users U where U.id = J.technicianId) as technician from Jobs J where issuedBy = " + Session["CurrentUser"] + " and completed = 1";
+        select = "select jobId, baseEnqueueTime,checkedIn,dequeueTime,(select username from Users U where U.id = J.technicianId) as technician, cost from Jobs J where issuedBy = " + Session["CurrentUser"] + " and completed = 1";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {
@@ -148,7 +157,7 @@ public partial class Customer : System.Web.UI.Page
         {
             complexity = 3;
         }
-        DateTime time = DateTime.Now;
+        DateTime time = (DateTime.Now).AddHours(-6);
         string format = "yyyy-MM-dd HH:mm:ss";
         string date = time.ToString(format);
         Console.WriteLine(date);
@@ -186,14 +195,14 @@ public partial class Customer : System.Web.UI.Page
         }
 
 
-        string insert = "insert into Jobs (enqueueTime,baseEnqueueTime,complexity,priority,issuedBy,minPrevEmpty) values ('" + date + "','" + date + "'," + complexity + "," + priority + ", (select id from Users where id ="+Session["CurrentUser"]+"),"+newMinPrev+")";
+        string insert = "insert into Jobs (enqueueTime,baseEnqueueTime,complexity,priority,issuedBy,minPrevEmpty,qCount,lastUpdated) values ('" + date + "','" + date + "'," + complexity + "," + priority + ", (select id from Users where id ="+Session["CurrentUser"]+"),"+newMinPrev+","+numUnstarted+",'"+time+"')";
         cmd = new SqlCommand(insert, db);
         int m = cmd.ExecuteNonQuery();
 
         //load unstarted
         //subselect counts num of jobs ahead in queue
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        select = "select jobId, baseEnqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By position";
+        select = "select jobId, baseEnqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By position ASC, lastUpdated ASC";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {

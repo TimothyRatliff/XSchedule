@@ -49,6 +49,7 @@
 			    <asp:BoundField DataField="checkedIn" HeaderText="Job Started" />
                 <asp:BoundField DataField="dequeueTime" HeaderText="Finished" />
 			    <asp:BoundField DataField="technician" HeaderText="Technician" />
+                <asp:BoundField DataField="cost" HeaderText="Cost ($)" />
             </Columns>
         </asp:GridView>
     </div>

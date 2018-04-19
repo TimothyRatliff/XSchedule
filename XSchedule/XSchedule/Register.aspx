@@ -9,7 +9,7 @@
         Username taken
     </div>
     <div runat="server" id="alertDiv2" class="alert alert-danger" visible="false">
-        Fill out both fields
+        Fill out both fields (only alphanumerics allowed)
     </div>
     
       <div class="form-group">
@@ -22,7 +22,7 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="password">Password:</label>
         <div class="col-sm-10">
-          <asp:TextBox ID="passwordField" runat="server"></asp:TextBox>
+          <asp:TextBox ID="passwordField" TextMode="Password" runat="server"></asp:TextBox>
         </div>
       </div>
       

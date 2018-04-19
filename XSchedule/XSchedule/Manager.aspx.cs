@@ -11,11 +11,6 @@ using System.Globalization;
 
 public partial class Manager : System.Web.UI.Page
 {
-    /*
-     * if(!Page.IsPostBack)
-{
-
-}*/
     TimeSpan TimeWithout95(DateTime start, DateTime end)
     {
         TimeSpan diff = new TimeSpan();
@@ -23,36 +18,48 @@ public partial class Manager : System.Web.UI.Page
         DateTime endOfDay = new DateTime(2000, 1, 1, 17, 0, 0);
         DateTime startOfDay = new DateTime(2000, 1, 1, 9, 0, 0);
 
-
-        if (start.TimeOfDay < end.TimeOfDay)
+        if (end.TimeOfDay > endOfDay.TimeOfDay)
         {
-            diff += (end.TimeOfDay - start.TimeOfDay);
-            start += (end.TimeOfDay - start.TimeOfDay);
 
-            int numDays = (end.Date.Subtract(start.Date)).Days;
-            diff += (new TimeSpan(numDays, 0, 0, 0));
-
-        }
-
-        else
-        {
-            diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (end.TimeOfDay - startOfDay.TimeOfDay);
-
+            diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (endOfDay.TimeOfDay - startOfDay.TimeOfDay);
             //minus one because the previous calculation added a day
             int numDays = (end.Date.Subtract(start.Date)).Days;
             diff += (new TimeSpan(numDays - 1, 0, 0, 0));
 
         }
+        else
+        {
+            if (start.TimeOfDay < end.TimeOfDay)
+            {
+                diff += (end.TimeOfDay - start.TimeOfDay);
+                start += (end.TimeOfDay - start.TimeOfDay);
+
+                int numDays = (end.Date.Subtract(start.Date)).Days;
+                diff += (new TimeSpan(numDays, 0, 0, 0));
+
+            }
+
+            else
+            {
+                diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (end.TimeOfDay - startOfDay.TimeOfDay);
+                //minus one because the previous calculation added a day
+                int numDays = (end.Date.Subtract(start.Date)).Days;
+                diff += (new TimeSpan(numDays - 1, 0, 0, 0));
+
+            }
+        }
 
         return diff;
     }
+
 
     string con = "Data Source=den1.mssql3.gear.host;Initial Catalog=TestDBXSCHEDULE1;User Id=testdbxschedule1;MultipleActiveResultSets=true; Password=By2up3~f6!Wy";
 
     protected void Page_Load(object sender, EventArgs e)
     {
        // System.Diagnostics.Debug.WriteLine(" PAGE LOADDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-        DateTime time = DateTime.Now;
+       // compensate for server time -ghetto
+        DateTime time = (DateTime.Now).AddHours(-6);
         DateTime lastM = (DateTime.Now).AddMonths(-1);
         string format = "yyyy-MM-dd";
         string format2 = "yyyy-MM";
@@ -87,7 +94,7 @@ public partial class Manager : System.Web.UI.Page
 
         //subselect counts num of jobs ahead in queue
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC";
+        string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC,lastUpdated ASC";
 
         using (SqlCommand command = new SqlCommand(select2, db))
         {
@@ -143,64 +150,40 @@ public partial class Manager : System.Web.UI.Page
         //average length
         //computed as (queueLength at start of day + midday + end of day)/3
         string morning = yesterday + " 00:00:00";
-        string startOfDay = yesterday + " 09:00:00";
-        string endOfDay = yesterday + " 17:00:00";
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + morning + "' and (checkedIn >'" + morning + "' or checkedIn IS NULL)";
-        cmd = new SqlCommand(select, db);
-        int count1 = (int)cmd.ExecuteScalar();
-
         string noon = yesterday + " 12:00:00";
-
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + noon + "' and (checkedIn >'" + noon + "' or checkedIn IS NULL)";
-        cmd = new SqlCommand(select, db);
-        int count2 = (int)cmd.ExecuteScalar();
-
         string night = yesterday + " 23:59:59";
 
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + night + "' and (checkedIn >'" + night + "' or checkedIn IS NULL)";
+        string startOfDay = yesterday + " 09:00:00";
+        string endOfDay = yesterday + " 17:00:00";
+
+        select = "select AVG(Cast(qCount as Float)) from Jobs where baseEnqueueTime >'" + morning + "' and baseEnqueueTime <'" + endOfDay + "'";
         cmd = new SqlCommand(select, db);
-        int count3 = (int)cmd.ExecuteScalar();
 
-        temp = (count1 + count2 + count3) / (3.0);
-        result = string.Format("{00:0}", temp);
+        double av = 0;
+        var value = cmd.ExecuteScalar();
+        if (value != DBNull.Value)
+        {
+            av = (double)value;
+
+        }
+        result = string.Format("{0:0}", av);
         DailyAvLengthLabel.Text = " " + result;
-
 
         //for month compute as length samples from each week/5
 
         string week0 = lastMonth + "-01 00:00:00";
-
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + week0 + "' and (checkedIn >'" + week0 + "' or checkedIn IS NULL)";
-        cmd = new SqlCommand(select, db);
-        count1 = (int)cmd.ExecuteScalar();
-
         string week1 = lastMonth + "-08 00:00:00";
-
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + week1 + "' and (checkedIn >'" + week1 + "' or checkedIn IS NULL)";
-        cmd = new SqlCommand(select, db);
-        count2 = (int)cmd.ExecuteScalar();
-
         string week2 = lastMonth + "-15 00:00:00";
-
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + week2 + "' and (checkedIn >'" + week2 + "' or checkedIn IS NULL)";
-        cmd = new SqlCommand(select, db);
-        count3 = (int)cmd.ExecuteScalar();
-
-        string week3 = lastMonth + "-22 00:00:00";
-
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + week3 + "' and (checkedIn >'" + week3 + "' or checkedIn IS NULL)";
-        cmd = new SqlCommand(select, db);
-        int count4 = (int)cmd.ExecuteScalar();
-
         string week4 = lastMonth + "-28 23:00:00";
 
-        select = "select count(*) from Jobs where baseEnqueueTime<'" + week4 + "' and (checkedIn >'" + week4 + "' or checkedIn IS NULL)";
+        select = "select AVG(Cast(qCount as Float)) as aver from Jobs where baseEnqueueTime >'" + week0 + "' and baseEnqueueTime<'" + week4 + "'";
         cmd = new SqlCommand(select, db);
-        int count5 = (int)cmd.ExecuteScalar();
+        av = 0;
+        value = cmd.ExecuteScalar();
+        if (value != DBNull.Value)
+            av = (double)value;
 
-
-        temp = (count1 + count2 + count3 + count4 + count5) / (5.0);
-        result = string.Format("{0:0}", temp);
+        result = string.Format("{0:0}", av);
         MonthlyAvLengthLabel.Text = " " + result;
 
 
@@ -570,6 +553,7 @@ public partial class Manager : System.Web.UI.Page
         System.Diagnostics.Debug.WriteLine(baseTime);
         //DateTime baseTime = (DateTime)queueGrid.DataKeys[i]["enqueueTime"];
         DateTime newTime = new DateTime();
+        DateTime time = (DateTime.Now).AddHours(-6);
         if (jobInd > i)
             newTime = baseTime.AddSeconds(-1);
         else if (jobInd == i)
@@ -584,7 +568,7 @@ public partial class Manager : System.Web.UI.Page
 
         string format = "yyyy-MM-dd HH:mm:ss";
         string timeString = newTime.ToString(format);
-        string update = "Update Jobs set enqueueTime='" + timeString + "', priority=" + queueGrid.DataKeys[i]["priority"].ToString() + " where jobId =" + jobEditField.Text + ";";
+        string update = "Update Jobs set enqueueTime='" + timeString + "', lastUpdated = '"+time+"', priority=" + queueGrid.DataKeys[i]["priority"].ToString() + " where jobId =" + jobEditField.Text + ";";
         System.Diagnostics.Debug.WriteLine(jobInd);
         System.Diagnostics.Debug.WriteLine(i);
         System.Diagnostics.Debug.WriteLine(timeString);
@@ -595,7 +579,7 @@ public partial class Manager : System.Web.UI.Page
         alertDiv1.InnerText = "Job Edited";
         //force query reload
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC";
+        string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC,lastUpdated ASC";
 
         using (SqlCommand command = new SqlCommand(select2, db))
         {
