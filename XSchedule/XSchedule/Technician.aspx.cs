@@ -55,6 +55,8 @@ public partial class Technician : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
+
+        billtable.Visible = false;
         if (Session["CurrentUser"] == null || (int)Session["CurrentUserType"] != 1)
         {
             Response.Redirect("default.aspx");
@@ -94,6 +96,8 @@ public partial class Technician : System.Web.UI.Page
 
     protected void CheckInButton_Click(object sender, EventArgs e)
     {
+
+        billtable.Visible = false;
         CurrentJobLabel.Visible = true;
 
         SqlConnection db = new SqlConnection(con);
@@ -198,14 +202,19 @@ public partial class Technician : System.Web.UI.Page
             //and 30 + 10*years accounts for the increased pay based on experience
             int rate = 30 + 10 * years;
             int pay = hoursWorked * rate;
-            string payString = string.Format("{0:00}$", pay);
+            string payString = string.Format("${0:00}", pay);
             //string text = string.Format("Bill Generated: Hours Worked: {0,20} Rate: {1,20}  Cost: {2}", hoursWorked, rate, payString);//"Bill Generated:       Hours Worked = " + hoursWorked + "         Rate($/Hour): " + rate + "                  Total Cost = " + payString + "$")
-            CurrentJobLabel.InnerText = "Bill Generated:     Hours Worked = " + hoursWorked + "     Rate($/Hour): " + rate + "    Total Cost = " + payString;// + "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds + "Milli  :" + diff.Milliseconds + "days :" + start.Day + "Hours :" + start.Hour + "Minutes :" + start.Minute + "Seconds :" + start.Second + "Milli  :" + start.Millisecond + "days :" + end.Day + "Hours :" + end.Hour +"Minutes :"+end.Minute + "Seconds :" + end.Second + "Milli  :" + end.Millisecond;
-                                                                                                                                                             //debug string (Timespan seems buggy) "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds +"Milli  :" + diff.Milliseconds;
+            //CurrentJobLabel.InnerText = "Bill Generated:     Hours Worked = " + hoursWorked + "     Rate($/Hour): " + rate + "    Total Cost = " + payString;// + "days :" + diff.Days + "Hours :" + diff.Hours + "Seconds :" + diff.Seconds + "Milli  :" + diff.Milliseconds + "days :" + start.Day + "Hours :" + start.Hour + "Minutes :" + start.Minute + "Seconds :" + start.Second + "Milli  :" + start.Millisecond + "days :" + end.Day + "Hours :" + end.Hour +"Minutes :"+end.Minute + "Seconds :" + end.Second + "Milli  :" + end.Millisecond;
+            CurrentJobLabel.InnerText = "Bill generated below and sent to view from Customer's Account";
+            hoursbilled.Text = hoursWorked.ToString();
+            payrate.Text = "$" + rate;
+            totalbill.Text = payString;
+            billtable.Visible = true;
 
             update2 = "Update Jobs set cost = " + pay + " where jobId = " + val;
             cmd = new SqlCommand(update2, db);
             cmd.ExecuteScalar();
+            
         }
         else
         {
