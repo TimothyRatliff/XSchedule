@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <link href="http://fonts.googleapis.com/css?family=Corben:bold" rel="stylesheet" type="text/css">
@@ -22,7 +22,7 @@ h1,h2 {
          <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <div id="imageCarousel" class="carousel slide" data-interval="2000"
+                <div id="imageCarousel" class="carousel slide" data-interval="5000"
                      data-ride="carousel" data-pause="hover" data-wrap="true">
 
                     <ol class="carousel-indicators">
@@ -62,7 +62,7 @@ h1,h2 {
                             </a>
                         </div>
                         <div class="item">
-                            <img src="https://gsb.net.in/wp-content/uploads/2016/10/commingsoon-497x330.jpg" class="img-responsive">
+                            <img src="https://cdn.dribbble.com/users/3860/screenshots/1183351/updates-coming-soon_1x.jpg" class="img-responsive">
                         </div>
                         <div class="item">
                             <a href="Contact.aspx"> 

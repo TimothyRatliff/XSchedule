@@ -140,7 +140,13 @@ public partial class Technician : System.Web.UI.Page
             cmd = new SqlCommand(select3, db);
 
             string thisCust = cmd.ExecuteScalar().ToString();
-            CurrentJobLabel.InnerText = "Current Job: \t Job ID  " + thisJobId + " \t Issued By: " + thisCust + "\t  Enqueue:" + thisJobEnq;
+
+            CurrentJobLabel.InnerText = "Current Job ->" +    
+                "Job ID  " + thisJobId +
+                "|" + 
+                " Issued By: " + thisCust +
+                "|" + 
+                "  Enqueue:" + thisJobEnq;
             
 
             DateTime time = (DateTime.Now).AddHours(-6);
@@ -227,6 +233,7 @@ public partial class Technician : System.Web.UI.Page
         {
 
         }
+
         db.Close();
     }
 
