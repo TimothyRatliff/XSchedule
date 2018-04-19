@@ -110,7 +110,7 @@ public partial class Customer : System.Web.UI.Page
         //load unstarted
         //subselect counts num of jobs ahead in queue
         string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
-        select = "select jobId, baseEnqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By priority, jobId";
+        select = "select jobId, baseEnqueueTime," + subSelect + " from Jobs J where J.issuedBy = " + Session["CurrentUser"] + "and J.technicianID IS NULL Order By position ASC ,enqueueTime ASC,lastUpdated ASC";
         cmd = new SqlCommand(select, db);
         using (SqlCommand command = new SqlCommand(select, db))
         {

@@ -199,14 +199,14 @@ public partial class Manager : System.Web.UI.Page
         //jobs addressed same day
 
 
-        select = "select count(jobId) as num from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') and  year(baseEnqueueTime) = year(checkedIn) and  month(baseEnqueueTime) = month(checkedIn) and  day(baseEnqueueTime) = day(checkedIn) ";
+        select = "select count(jobId) as num from Jobs where year(baseEnqueueTime) = year('" + day + "') and month(baseEnqueueTime) = month('" + day + "') and day(baseEnqueueTime) = day('" + day + "') and  year(baseEnqueueTime) = year(checkedIn) and  month(baseEnqueueTime) = month(checkedIn) and  day(baseEnqueueTime) != day(checkedIn) ";
         cmd = new SqlCommand(select, db);
 
         result = cmd.ExecuteScalar().ToString();
         DailySameDayLabel.Text = result;
 
         //month
-        select = "select count(jobId) as num from Jobs where year(baseEnqueueTime) = year('" + month + "') and month(baseEnqueueTime) = month('" + month + "') and  year(baseEnqueueTime) = year(checkedIn) and  month(baseEnqueueTime) = month(checkedIn) and  day(baseEnqueueTime) = day(checkedIn) ";
+        select = "select count(jobId) as num from Jobs where year(baseEnqueueTime) = year('" + month + "') and month(baseEnqueueTime) = month('" + month + "') and  year(baseEnqueueTime) = year(checkedIn) and  month(baseEnqueueTime) = month(checkedIn) and  day(baseEnqueueTime) != day(checkedIn) ";
         cmd = new SqlCommand(select, db);
 
         result = cmd.ExecuteScalar().ToString();

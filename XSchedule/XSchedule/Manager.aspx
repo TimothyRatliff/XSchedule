@@ -36,7 +36,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="auto-style4">Jobs Addressed Same Day</td>
+                <td class="auto-style4">Jobs Not Addressed Same Day</td>
                 <td id="typeField4" class="auto-style5">
                     <asp:Label ID="DailySameDayLabel" runat="server" Text="Label"></asp:Label>
                 </td>
@@ -72,7 +72,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="auto-style4">Jobs Addressed Same Day</td>
+                <td class="auto-style4">Jobs Not Addressed Same Day</td>
                 <td id="typeField9" class="auto-style5">
                     <asp:Label ID="MonthlySameDayLabel" runat="server" Text="Label"></asp:Label>
                 </td>
