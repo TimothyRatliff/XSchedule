@@ -93,11 +93,11 @@ public partial class Technician : System.Web.UI.Page
         }
         else
         {
-            CheckInButton.Visible = false;
+
             cmd = new SqlCommand(select3, db);
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
-            CurrentJobLabel.InnerText = "Current Job: " + "     Job ID:  " + reader[0] +"       Issued By: "+reader[1]+ "      Enqueued:  "+ reader[2];
+            CurrentJobLabel.InnerText = "Current Job: " + "     Job ID:  " + reader[0] +"       Issued By (User ID): "+reader[1]+ "      Enqueued:  "+ reader[2];
 
         }
  
@@ -141,12 +141,12 @@ public partial class Technician : System.Web.UI.Page
 
             string thisCust = cmd.ExecuteScalar().ToString();
 
-            CurrentJobLabel.InnerText = "Current Job ->" +    
+            CurrentJobLabel.InnerText = "Current Job:   " +    
                 "Job ID  " + thisJobId +
-                "|" + 
+                "  |  " + 
                 " Issued By: " + thisCust +
-                "|" + 
-                "  Enqueue:" + thisJobEnq;
+                "  |  " + 
+                "  Enqueued:  " + thisJobEnq;
             
 
             DateTime time = (DateTime.Now).AddHours(-6);
