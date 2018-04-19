@@ -97,7 +97,7 @@ public partial class Technician : System.Web.UI.Page
             cmd = new SqlCommand(select3, db);
             SqlDataReader reader = cmd.ExecuteReader();
             reader.Read();
-            CurrentJobLabel.InnerText = "Current Job: " + "     Job ID:  " + reader[0] +"       Issued By (User ID): "+reader[1]+ "      Enqueued:  "+ reader[2];
+            CurrentJobLabel.InnerText = "Current Job: " + "    Job ID:  " + reader[0] +"       Issued By (User ID): "+reader[1]+ "      Enqueued:  "+ reader[2];
 
         }
  
@@ -112,7 +112,7 @@ public partial class Technician : System.Web.UI.Page
 
         SqlConnection db = new SqlConnection(con);
         db.Open();
-        string select = "SELECT TOP 1 jobID from Jobs where technicianId IS NULL order by priority DESC,enqueueTime ASC";
+        string select = "SELECT TOP 1 jobID from Jobs where technicianId IS NULL order by priority DESC,enqueueTime ASC,lastUpdated ASC";
         SqlCommand cmd = new SqlCommand(select, db);
         var result = cmd.ExecuteScalar();
         if (result == null)
@@ -142,10 +142,10 @@ public partial class Technician : System.Web.UI.Page
             string thisCust = cmd.ExecuteScalar().ToString();
 
             CurrentJobLabel.InnerText = "Current Job:   " +    
-                "Job ID  " + thisJobId +
-                "  |  " + 
+                "Job ID:  " + thisJobId +
+                "    " + 
                 " Issued By: " + thisCust +
-                "  |  " + 
+                "    " + 
                 "  Enqueued:  " + thisJobEnq;
             
 

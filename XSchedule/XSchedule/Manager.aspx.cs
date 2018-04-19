@@ -103,7 +103,7 @@ public partial class Manager : System.Web.UI.Page
         //show queue 
 
         //subselect counts num of jobs ahead in queue
-        string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
+        string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)or (X.priority = J.priority and X.enqueueTime=J.enqueueTime and X.lastUpdated<J.lastUpdated)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
         string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC,lastUpdated ASC";
 
         using (SqlCommand command = new SqlCommand(select2, db))
@@ -555,7 +555,7 @@ public partial class Manager : System.Web.UI.Page
         updateCmd.ExecuteNonQuery();
         alertDiv1.InnerText = "Job Edited";
         //force query reload
-        string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
+        string subSelect = "(select count(*) from Jobs X  where (X.priority>J.priority or (X.priority = J.priority and X.enqueueTime<J.enqueueTime)or (X.priority = J.priority and X.enqueueTime=J.enqueueTime and X.lastUpdated<J.lastUpdated)) and X.technicianId IS NULL and J.technicianID IS NULL) as position";
         string select2 = "select jobId, enqueueTime,baseEnqueueTime,priority," + subSelect + " from Jobs J where checkedIn IS NULL Order By position ASC ,enqueueTime ASC,lastUpdated ASC";
 
         using (SqlCommand command = new SqlCommand(select2, db))
