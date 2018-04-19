@@ -12,34 +12,45 @@ public partial class Customer : System.Web.UI.Page
 {
     TimeSpan TimeWithout95(DateTime start, DateTime end)
     {
-        TimeSpan diff = new TimeSpan();
+        TimeSpan diff = new TimeSpan(0, 0, 0);
 
         DateTime endOfDay = new DateTime(2000, 1, 1, 17, 0, 0);
         DateTime startOfDay = new DateTime(2000, 1, 1, 9, 0, 0);
-
+        //if they start before the day dont chage for it
+        if (start.TimeOfDay < startOfDay.TimeOfDay)
+        {
+            start.Add((startOfDay.TimeOfDay - start.TimeOfDay));
+        }
+        //if they start at the end of day dont chage for it
         if (end.TimeOfDay > endOfDay.TimeOfDay)
         {
 
-                diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (endOfDay.TimeOfDay - startOfDay.TimeOfDay);
-                //minus one because the previous calculation added a day
-                int numDays = (end.Date.Subtract(start.Date)).Days;
-                diff += (new TimeSpan(numDays - 1, 0, 0, 0));
+            diff += (endOfDay.TimeOfDay - start.TimeOfDay);
+            //minus one because the previous calculation added a day
+            int numDays = (end.Date.Subtract(start.Date)).Days;
+
+            diff += (new TimeSpan(numDays, 0, 0, 0));
 
         }
-        else {
+        else
+        {
             if (start.TimeOfDay < end.TimeOfDay)
             {
+
                 diff += (end.TimeOfDay - start.TimeOfDay);
                 start += (end.TimeOfDay - start.TimeOfDay);
 
                 int numDays = (end.Date.Subtract(start.Date)).Days;
+
                 diff += (new TimeSpan(numDays, 0, 0, 0));
 
             }
 
             else
             {
+
                 diff += (endOfDay.TimeOfDay - start.TimeOfDay) + (end.TimeOfDay - startOfDay.TimeOfDay);
+
                 //minus one because the previous calculation added a day
                 int numDays = (end.Date.Subtract(start.Date)).Days;
                 diff += (new TimeSpan(numDays - 1, 0, 0, 0));

@@ -13,8 +13,8 @@
         <div class="panel-body" runat="server" id="CurrentJobLabel">No current job</div>
     </div>
     <div>
-        <asp:Table ID="billtable" runat="server" GridLines="Both" Height="145px" 
-            Width="133px" BorderWidth="1px" Caption="Bill Generated" CellPadding="5">
+        <asp:Table ID="billtable" class="table table-hover" runat="server" GridLines="Both" Height="145px" 
+            Width="200px" BorderWidth="1px" Caption="Bill Generated" CellPadding="5">
             <asp:TableRow runat="server" HorizontalAlign="Left">
                 <asp:TableCell runat="server">Hours Billed</asp:TableCell>
                 <asp:TableCell ID="hoursbilled" runat="server" HorizontalAlign="Right"></asp:TableCell>
